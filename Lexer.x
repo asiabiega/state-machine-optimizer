@@ -24,7 +24,7 @@ tokens :-
 	"_"						{ \p s -> tokenWithPos p TkWildcard }
 	"("						{ \p s -> tokenWithPos p TkLParen }
 	")"						{ \p s -> tokenWithPos p TkRParen }
-	$quote (_ |$white | $digit | $alpha)* $quote 	{ \p s -> tokenWithPos p (TkString (read s)) }
+	$quote [^$quote]* $quote 			{ \p s -> tokenWithPos p (TkString (read s)) }
 	($white)+      		     			;
 {
 data BaseToken = TkIf
