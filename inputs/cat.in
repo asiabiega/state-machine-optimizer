@@ -1,0 +1,120 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+((0 
+ (CASE (VAR "verb")  (
+  (ARM (0 ) 
+     (IF (EQUALS (VAR "self.proper") 1)  
+        (IF (EQUALS (VAR "self in")  17  ) 
+           (DECISION _  "Turmeric is sitting on a bee-keeper's veil" ) 
+         () 
+	   (DECISION _  "Turmeric sits here." ) )
+      () 
+        (IF (EQUALS (VAR "self in")  17  ) 
+           (DECISION _  "An old moggy is sitting on a bee-keeper's veil" ) 
+         () 
+	   (DECISION _  "An old moggy sits here." ) )))
+  (ARM (18 )
+     (IF (EQUALS (VAR "self in")  17  ) 
+        (DECISION _  "This is a fat and contented ginger tom. A portion of his left ear is missing and he has a scar on his nose. He is sitting on a bee-keeper's veil." ) 
+      () 
+        (DECISION _  "This is a fat and contented ginger tom. A portion of his left ear is missing and he has a scar on his nose." ) ))
+  (ARM (29 )
+     (DECISION _  "It's probably safe to say that the cat does not intend to obey you." ) ))
+  (DECISION _ "") ))
+(1 (CASE (VAR "verb")  (
+  (ARM (3  2 ) (DECISION 1 "The cat hisses at you, and you decide that inaction is the best course of action."))
+  (ARM (4 )
+     (IF (AND (EQUALS (VAR "noun has Vessel") 1)  (EQUALS (VAR "noun has Open") 1)  (EQUALS (VAR "noun has Liquid") 1) )
+	  (DECISION 1 "You hurl the liquid at the cat, who howls in horror and flees like lightning.")
+	() 
+	  (DECISION 1 "The cat sniffs, then turns up his nose at your offering.")))
+  (ARM (19 ) (DECISION 1 "The cat refuses to let you pick him up."))
+  (ARM (20  21  22  23  24  25 )
+     (DECISION 1 "The cat swipes at you angrily with his claw. This is clearly not a cat who takes kindly to being fussed over."))
+  (ARM (26 ) 
+     (IF (EQUALS (VAR "self.proper") 1)  (DECISION _ "Turmeric") ()  (DECISION _ "cat")))
+  (ARM (27 )
+     (IF (OR (EQUALS (VAR "self in")  17  )  (EQUALS (VAR "random")  1)) (DECISION _ "") 
+	() 
+	  (CASE (VAR "parent")  (
+	     (ARM (30 ) (DECISION 99 "northeast to SecondCourt"))
+	     (ARM (31 ) (DECISION 99 "southeast to SecondCourt"))
+	     (ARM (32 ) 
+		(CASE (VAR "random")  (
+		   (ARM (1) (DECISION 99 "southwest to GreatHall"))
+		   (ARM (2) (DECISION 99 "east to StairGround"))
+		   (ARM (3) (DECISION 99 "northwest to AnteChapel"))
+		   )
+		  (DECISION 99 "northeast to Gardens")))
+	     (ARM (33 ) (DECISION 99 "west to SecondCourt")))
+	     (DECISION 1 "** Error: cat not where it should be **"))))
+  (ARM (28 )
+    (IF (EQUALS (VAR "parrothere")  1)
+	 (DECISION _ "The cat hisses at the parrot, which squawks loudly in return, knowing that it is safe on its perch.")
+     () 
+	(CASE (VAR "random")  (
+	       (ARM (1) (DECISION _  "The cat meows." ) )
+	       (ARM (2) (DECISION _  "The cat stretches lazily." ) )
+	       (ARM (3) (DECISION _  "The cat washes himself." ) )
+	       (ARM (4) (DECISION _  "The cat purrs loudly." ) )
+	       (ARM (5) (DECISION _  "The cat rubs his head against your legs." ) )
+	       (ARM (6) (DECISION _  "The cat scratches his ears." ) )
+	       (ARM (7) (DECISION _  "The cat rolls around in the dust." ) ))
+	 (DECISION _ "") ))))
+  (DECISION _ "") 
+  ))
+)
+

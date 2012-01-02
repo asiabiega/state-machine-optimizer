@@ -1,0 +1,94 @@
+((0 (IF (OR (EQUALS (VAR "verb") 0)) (IF (EQUALS (VAR "where") 1) (DECISION 0 
+                       "^A parrot perches on a branch high up in the elm tree.") 
+             () (DECISION 0 
+                       "^A parrot sits half-hidden among the branches of the laburnum tree.")) 
+         () (DECISION _ ""))) 
+  (1 (IF (OR (EQUALS (VAR "verb") 2) (EQUALS (VAR "verb") 3) 
+             (EQUALS (VAR "verb") 4) (EQUALS (VAR "verb") 5)) (DECISION 2 "") 
+         ((ELSEIF (OR (EQUALS (VAR "verb") 6)) (IF (EQUALS (VAR "self.state") 
+                               0) (DECISION 3 "") () (DECISION 3 
+                                 "Your throw goes wild, and you barely brush the lower branches of the tree.")))) 
+         (DECISION _ ""))) (2 3 4 (IF (OR (EQUALS (VAR "verb") 10)) 
+         (DECISION _ "The parrot takes no notice of you.") 
+         ((ELSEIF (OR (EQUALS (VAR "verb") 11) (EQUALS (VAR "verb") 12)) 
+                   (DECISION _ "The parrot takes no notice of you.")) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 13)) (DECISION _ 
+                             "You'll be telling me next that you can fly!")) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 14)) 
+                   (IF (OR (EQUALS (VAR "state") 2) (EQUALS (VAR "state") 3)) 
+                       (IF (EQUALS (VAR "self.state") 0) (DECISION _ "") () 
+                           (DECISION _ 
+                                     "The parrot is startled by your attack, and with a loud squawk it jumps from its perch and circles the tree before settling back onto the branch again.")) 
+                       () (IF (EQUALS (VAR "Edward") 7) 
+                           (IF (EQUALS (VAR "here") 1) (DECISION 1 "") () 
+                               (DECISION 9 "")) () (DECISION 20 ""))))) 
+         (IF (EQUALS (VAR "here") 1) (DECISION 1 
+                       "The parrot is startled by your attack, and with a loud squawk it jumps from its perch and flies rapidly away to the southeast") 
+             () (DECISION 1 
+                       "The parrot is startled by your attack, and with a loud squawk it jumps from its perch and flies rapidly away to the northwest")))) 
+  (9 20 (IF (OR (EQUALS (VAR "self.state") 2) (EQUALS (VAR "self.state") 10)) 
+         (IF (EQUALS (VAR "Edward") 8) (DECISION _ 
+                       "^Edward watches the parrot as it disappears with an expression of dismay. ~Come back, Polly,~ he calls.^") 
+             ((ELSEIF (EQUALS (VAR "Edward") 1) (DECISION 9 ""))) 
+             (DECISION _ "")) ((ELSEIF (OR (EQUALS (VAR "self.state") 3) 
+                       (EQUALS (VAR "self.state") 11)) 
+                   (IF (EQUALS (VAR "Edward") 9) 
+                       (DECISION _ "^** Error: punt in the wrong place **^") 
+                       ((ELSEIF (EQUALS (VAR "here") 9) (DECISION _ 
+                                           "^Edward climbs into the punt."))) 
+                       (DECISION _ ""))) 
+           (ELSEIF (OR (EQUALS (VAR "self.state") 4) 
+                       (EQUALS (VAR "self.state") 12)) 
+                   (IF (EQUALS (VAR "here") 9) (IF (EQUALS (VAR "i") 9) 
+                           (DECISION _ "^Edward picks up the punt pole.") 
+                           ((ELSEIF (EQUALS (VAR "i") 15) (DECISION _ 
+                                               "^~Give me the punt pole,~ commands Edward, and to your surprise, you obey."))) 
+                           (DECISION 0 "^** Error: pole in wrong place **^")) 
+                       () (DECISION _ ""))) 
+           (ELSEIF (OR (EQUALS (VAR "self.state") 5) 
+                       (EQUALS (VAR "self.state") 13)) 
+                   (IF (EQUALS (VAR "here") 9) (DECISION _ 
+                                 "^Edward plants the punt pole into the river bed and prepares to set out.") 
+                       () (DECISION _ ""))) 
+           (ELSEIF (OR (EQUALS (VAR "self.state") 6) 
+                       (EQUALS (VAR "self.state") 14)) 
+                   (IF (EQUALS (VAR "here") 9) 
+                       (IF (EQUALS (VAR "where") 16) (DECISION _ 
+                                     "^With seemingly effortless ease, Edward pushes off from the bank, poles the punt out into the river and heads downstream") 
+                           () (DECISION _ 
+                                     "^With seemingly effortless ease, Edward pushes off from the bank, poles the punt out into the river and heads upstream")) 
+                       () (DECISION _ 
+                                 "^A punt comes round a bend on the river, punted by Edward. He steers the vessel directly towards you, and with a final graceful manoeuvre, he brings the punt to rest against the bank."))) 
+           (ELSEIF (OR (EQUALS (VAR "self.state") 7) 
+                       (EQUALS (VAR "self.state") 15)) 
+                   (IF (EQUALS (VAR "Edward") 8) (DECISION _ 
+                                 "^Edward puts down the punt pole and gets out of the punt.") 
+                       () (DECISION _ ""))) 
+           (ELSEIF (OR (EQUALS (VAR "self.state") 8) 
+                       (EQUALS (VAR "self.state") 17)) 
+                   (IF (EQUALS (VAR "Edward") 8) (DECISION 0 
+                                 "^Edward stares up at his parrot forlornly. ~Come here, Polly,~ he calls, though not with any conviction that he is going to be obeyed.^") 
+                       () (DECISION 0 ""))) 
+           (ELSEIF (OR (EQUALS (VAR "self.state") 9) 
+                       (EQUALS (VAR "self.state") 18) 
+                       (EQUALS (VAR "self.state") 24)) 
+                   (IF (EQUALS (VAR "where") 8) 
+                       (IF (EQUALS (VAR "self.state") 18) (DECISION 1 
+                                     "^Something seems to have disturbed the parrot, because it suddenly gives a loud squawk and takes to the air, quickly flying out of sight.^") 
+                           ((ELSEIF (EQUALS (VAR "self.state") 24) 
+                                     (DECISION 0 
+                                               "^You hear a squawk above you, and looking up you see a grey parrot alighting on the elm tree"))) 
+                           (DECISION _ 
+                                     "^Something seems to have disturbed the parrot, because it suddenly gives a loud squawk and takes to the air, quickly flying out of sight.^")) 
+                       () (DECISION _ 
+                                 "The parrot is thirty feet above your head. Otherwise, a good attempt.")))) 
+         (IF (OR (EQUALS (VAR "random") 1)) 
+             (DECISION _ "^The parrot squawks loudly.") 
+             ((ELSEIF (OR (EQUALS (VAR "random") 2)) 
+                       (DECISION _ "^The parrot squawks loudly.")) 
+               (ELSEIF (OR (EQUALS (VAR "random") 3) (EQUALS (VAR "random") 
+                                   4) (EQUALS (VAR "random") 5) 
+                           (EQUALS (VAR "random") 6) (EQUALS (VAR "random") 
+                                   7) (EQUALS (VAR "random") 8) 
+                           (EQUALS (VAR "random") 9) (EQUALS (VAR "random") 
+                                   10)) (DECISION _ ""))) (DECISION _ "")))))

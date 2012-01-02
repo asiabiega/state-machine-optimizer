@@ -1,0 +1,5 @@
+((0 (IF (AND (EQUALS (VAR "rs2_at_0") 0) (EQUALS (VAR "i_at_0") 0)) 
+         (DECISION 0 "Found instruction indirectR") 
+         ((ELSEIF (AND (EQUALS (VAR "i_at_0") 0)) 
+                   (DECISION 0 "Found instruction indexR"))) 
+         (DECISION 1 "Did not find an instruction"))))

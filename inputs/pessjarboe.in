@@ -1,0 +1,498 @@
+((1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+     (IF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 1)) 
+         (DECISION _ "Yuck! What a horrible suggestion.") 
+         ((ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 1)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "DoorA5") 1) (EQUALS (VAR "verb") 6) 
+                        (EQUALS (VAR "state") 1)) (DECISION 2 
+                             "You hear the sound of a key turning int he door to Malcolm's room, and then the sound of the door opening.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 1)) 
+                   (DECISION 2 
+                             "Through the doorway, you can hear voices coming from Malcom's study.  ~Well, Jarboe, I suppose we should have one more look,~ comes a deep voice.  ~I am sure that he has hidden it somewhere in here.~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 1)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 2)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 2)) 
+                   (DECISION 3 
+                             "Through the doorway, you can hear voices coming from Malcom's study.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 2)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 3)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 3)) 
+                   (DECISION 4 
+                             "Through the doorway you can hear voices coming from Malcolm's study.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 3)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 4)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 4)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 4)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 4)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 4)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 4)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 4)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 4)) 
+                   (DECISION 5 
+                             "Through the doorway you can hear voices coming from Malcolm's study.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 4)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 5)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 5)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 5)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 5)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 5)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 5)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 5)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 5)) 
+                   (DECISION 6 "Someone says ~Hmm, not in my experience.~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 5)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 6)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 6)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 6)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 6)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 6)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 6)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 6)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 6)) 
+                   (DECISION 7 "Someone says ~Nothing here at all.~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 6)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 7)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 8)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 7)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 8)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 7)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 7)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 8)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 8)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 7)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 8)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 7)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 8)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 7)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 8)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 7)) 
+                   (DECISION 9 
+                             "~Well, well, well,~ says Jarboe to Bungay. ~What do we see here?~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 8)) 
+                   (DECISION 9 
+                             "~Well, well, well,~ says Jarboe to Bungay. ~What do we see here?~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 7)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 8)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 9)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 9)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 9)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 9)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 9)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 9)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 9)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 9)) 
+                   (DECISION 10 
+                             "~No, I rather thinks she's his sister,~ says Bungay.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 9)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 10)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 10)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 10)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 10)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 10)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 10)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 10)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 10)) 
+                   (DECISION 11 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 10)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 11)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 11)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 11)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 11)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 11)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 11)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 11)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 11)) 
+                   (DECISION 12 
+                             "Bungay turns to his colleague.  ~We've wasted enough time here, there's a lot to be done before this evening.~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 11)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 12)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 12)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 12)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 12)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 12)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 12)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 12)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 12)) 
+                   (DECISION 13 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 12)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 13)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 13)) 
+                   (DECISION 14 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 13)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 14)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 14)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 14)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 14)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 14)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 14)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 14)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 14)) 
+                   (DECISION 15 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 14)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 15)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 15)) 
+                   (DECISION 16 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 15)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 16)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 16)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 16)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 16)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 16)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 16)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 16)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 16)) 
+                   (DECISION 17 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 16)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 17)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 17)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 17)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 17)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 17)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 17)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 17)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 17)) 
+                   (DECISION 18 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 17)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 18)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 18)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 18)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 18)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 18)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 18)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 18)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 18)) 
+                   (DECISION 19 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 18)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 19)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 19)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 19)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 19)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 19)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 19)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 19)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 19)) 
+                   (DECISION 20 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 19)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 20)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 20)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 20)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 20)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 20)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 20)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 20)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 20)) 
+                   (DECISION 21 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 20)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 21)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 21)) 
+                   (DECISION 22 
+                             "Jarboe unlocks the door to B4, walks through it, and shuts it.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 21)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 22)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 22)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 22)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 22)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 22)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 22)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 22)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 22)) 
+                   (DECISION 23 "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 22)) (DECISION _ "Default")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 23)) 
+                   (DECISION _ "Yuck! What a horrible suggestion.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 23)) 
+                   (DECISION _ 
+                             "Jarboe slaps you in the face, and you stagger back. ~Cut it out, you pathetic girl!~ he shouts. You start to cry, and the tears run down your cheeks.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 2) (EQUALS (VAR "state") 23)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 23)) 
+                   (DECISION _ 
+                             "Jarboe knocks your offering aside contemptuously.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 23)) 
+                   (DECISION _ "~Shut up!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "location") 0) (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 23)) (DECISION _ 
+                             "~Aha! What have we here, then?~ Jarboe shouts exultantly.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 23)) 
+                   (DECISION _ "~Rats!~ growls Jarboe.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 23)) 
+                   (DECISION 1 
+                             "Bungay unlocks the door to C3, walks through it, and shuts it.  You here him locking it.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 23)) (DECISION _ "Default"))) 
+         (DECISION _ ""))))

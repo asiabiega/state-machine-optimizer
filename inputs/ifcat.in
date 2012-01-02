@@ -1,0 +1,82 @@
+((0 (IF (OR (EQUALS (VAR "verb") 0)) 
+         (IF (EQUALS (VAR "self.proper") 1) (IF (EQUALS (VAR "self in") 17) 
+                 (DECISION _ "Turmeric is sitting on a bee-keeper's veil") () 
+                 (DECISION _ "Turmeric sits here.")) () 
+             (IF (EQUALS (VAR "self in") 17) (DECISION _ 
+                           "An old moggy is sitting on a bee-keeper's veil") 
+                 () (DECISION _ "An old moggy sits here."))) 
+         ((ELSEIF (OR (EQUALS (VAR "verb") 18)) 
+                   (IF (EQUALS (VAR "self in") 17) (DECISION _ 
+                                 "This is a fat and contented ginger tom. A portion of his left ear is missing and he has a scar on his nose. He is sitting on a bee-keeper's veil.") 
+                       () (DECISION _ 
+                                 "This is a fat and contented ginger tom. A portion of his left ear is missing and he has a scar on his nose."))) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 29)) (DECISION _ 
+                             "It's probably safe to say that the cat does not intend to obey you."))) 
+         (DECISION _ ""))) 
+  (1 (IF (OR (EQUALS (VAR "verb") 3) (EQUALS (VAR "verb") 2)) (DECISION 1 
+                   "The cat hisses at you, and you decide that inaction is the best course of action.") 
+         ((ELSEIF (OR (EQUALS (VAR "verb") 4)) 
+                   (IF (AND (EQUALS (VAR "noun has Vessel") 1) 
+                            (EQUALS (VAR "noun has Open") 1) 
+                            (EQUALS (VAR "noun has Liquid") 1)) (DECISION 1 
+                                 "You hurl the liquid at the cat, who howls in horror and flees like lightning.") 
+                       () (DECISION 1 
+                                 "The cat sniffs, then turns up his nose at your offering."))) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 19)) 
+                   (DECISION 1 "The cat refuses to let you pick him up.")) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 20) (EQUALS (VAR "verb") 21) 
+                       (EQUALS (VAR "verb") 22) (EQUALS (VAR "verb") 23) 
+                       (EQUALS (VAR "verb") 24) (EQUALS (VAR "verb") 25)) 
+                   (DECISION 1 
+                             "The cat swipes at you angrily with his claw. This is clearly not a cat who takes kindly to being fussed over.")) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 26)) 
+                   (IF (EQUALS (VAR "self.proper") 1) (DECISION _ "Turmeric") 
+                       () (DECISION _ "cat"))) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 27)) 
+                   (IF (OR (EQUALS (VAR "self in") 17) 
+                           (EQUALS (VAR "random") 1)) (DECISION _ "") () 
+                       (IF (OR (EQUALS (VAR "parent") 30)) 
+                           (DECISION 99 "northeast to SecondCourt") 
+                           ((ELSEIF (OR (EQUALS (VAR "parent") 31)) 
+                                     (DECISION 99 
+                                               "southeast to SecondCourt")) 
+                             (ELSEIF (OR (EQUALS (VAR "parent") 32)) 
+                                     (IF (OR (EQUALS (VAR "random") 1)) 
+                                         (DECISION 99 
+                                                   "southwest to GreatHall") 
+                                         ((ELSEIF (OR (EQUALS (VAR "random") 
+                                                               2)) 
+                                                   (DECISION 99 
+                                                             "east to StairGround")) 
+                                           (ELSEIF (OR (EQUALS (VAR "random") 
+                                                               3)) 
+                                                   (DECISION 99 
+                                                             "northwest to AnteChapel"))) 
+                                         (DECISION 99 
+                                                   "northeast to Gardens"))) 
+                             (ELSEIF (OR (EQUALS (VAR "parent") 33)) 
+                                     (DECISION 99 "west to SecondCourt"))) 
+                           (DECISION 1 
+                                     "** Error: cat not where it should be **")))) 
+           (ELSEIF (OR (EQUALS (VAR "verb") 28)) 
+                   (IF (EQUALS (VAR "parrothere") 1) (DECISION _ 
+                                 "The cat hisses at the parrot, which squawks loudly in return, knowing that it is safe on its perch.") 
+                       () (IF (OR (EQUALS (VAR "random") 1)) 
+                           (DECISION _ "The cat meows.") 
+                           ((ELSEIF (OR (EQUALS (VAR "random") 2)) 
+                                     (DECISION _ 
+                                               "The cat stretches lazily.")) 
+                             (ELSEIF (OR (EQUALS (VAR "random") 3)) 
+                                     (DECISION _ "The cat washes himself.")) 
+                             (ELSEIF (OR (EQUALS (VAR "random") 4)) 
+                                     (DECISION _ "The cat purrs loudly.")) 
+                             (ELSEIF (OR (EQUALS (VAR "random") 5)) 
+                                     (DECISION _ 
+                                               "The cat rubs his head against your legs.")) 
+                             (ELSEIF (OR (EQUALS (VAR "random") 6)) 
+                                     (DECISION _ 
+                                               "The cat scratches his ears.")) 
+                             (ELSEIF (OR (EQUALS (VAR "random") 7)) 
+                                     (DECISION _ 
+                                               "The cat rolls around in the dust."))) 
+                           (DECISION _ ""))))) (DECISION _ ""))))
