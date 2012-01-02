@@ -1,6 +1,8 @@
 import Prelude
 import Data.List(elem)
 
+-------------------------------------------------------------------------------------------------------------
+
 data Term = TmIf Condition Term [(Condition, Term)] Term
             | TmDecision NewState Utterance
             | TmCase Variable [(ValueSet, Term)] Term
@@ -23,37 +25,48 @@ type Rule = ([StateNumber], Term)
 type Character = [Rule]
 type Env = [(String, Int)]
 
-get_state_term :: StateNumber -> Character -> Term
-get_state_term state_num [] = TmDecision TmCurrent "No such state number"
-get_state_term state_num (x:xs) = if elem state_num (fst x) then snd x else get_state_term state_num xs
+-------------------------------------------------------------------------------------------------------------
 
-run_machine :: StateNumber -> Character -> Env-> Term
-run_machine state_num character env = let t = get_state_term state_num character in eval t env
+getStateTerm :: StateNumber -> Character -> Term
+getStateTerm state_num [] = TmDecision TmCurrent "No such state number"
+getStateTerm state_num (x:xs) = if elem state_num (fst x) then snd x else getStateTerm state_num xs
 
---get_env_val
+runMachine :: StateNumber -> Character -> Env-> Term
+runMachine state_num character env = let t = getStateTerm state_num character in eval t env
+
+-------------------------------------------------------------------------------------------------------------
 
 eval :: Term -> Env-> Term
 
-eval (TmIf cond tt elifs tf) env = case eval_condition cond env of 
+eval (TmIf cond tt elifs tf) env = case evalCondition cond env of 
     TmTrue -> eval tt env
     TmFalse -> case elifs of 
         [] -> eval tf env
         (cnd, term):xs -> eval (TmIf cnd term xs tf) env
 
-eval (TmCase x [] def) env = eval def env
-eval (TmCase (TmVar x) ((vs, t):xs) def) env = eval def env -- if elem (env x) vs then eval t else eval rec.
+eval (TmCase (TmVar x) arms def) env = case lookup x env of
+    Just val -> let t = chooseCase val arms def in eval t env
+    Nothing -> eval def env
 
 eval t env = t
 
-eval_condition :: Condition -> Env -> Condition
+-------------------------------------------------------------------------------------------------------------
 
---tutaj booleans
-eval_condition (TmEquals (TmVar x) val) env = TmTrue -- if elem_val (env x) == k then True else False
+chooseCase val [] def = def
+chooseCase val ((vs, t):xs) def = if elem val vs then t
+                                else chooseCase val xs def
 
-eval_condition (TmAnd []) env = TmTrue
-eval_condition (TmAnd (x:xs)) env = if eval_condition x env == TmTrue then eval_condition (TmAnd xs) env
+-------------------------------------------------------------------------------------------------------------
+evalCondition :: Condition -> Env -> Condition
+
+evalCondition (TmEquals (TmVar x) val) env = case lookup x env of
+    Just v -> if v == val then TmTrue else TmFalse
+    Nothing -> TmFalse
+
+evalCondition (TmAnd []) env = TmTrue
+evalCondition (TmAnd (x:xs)) env = if evalCondition x env == TmTrue then evalCondition (TmAnd xs) env
                                 else TmFalse
 
-eval_condition (TmOr []) env = TmFalse
-eval_condition (TmOr (x:xs)) env = if eval_condition x env == TmTrue then TmTrue
-                                else eval_condition (TmOr xs) env
+evalCondition (TmOr []) env = TmFalse
+evalCondition (TmOr (x:xs)) env = if evalCondition x env == TmTrue then TmTrue
+                                else evalCondition (TmOr xs) env
