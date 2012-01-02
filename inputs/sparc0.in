@@ -1,0 +1,5 @@
+((0 (IF (AND (EQUALS (VAR "i_at_0") 0)) 
+         (DECISION 0 "Found instruction rmode") 
+         ((ELSEIF (AND (EQUALS (VAR "i_at_0") 1)) 
+                   (DECISION 0 "Found instruction imode"))) 
+         (DECISION 1 "Did not find an instruction"))))

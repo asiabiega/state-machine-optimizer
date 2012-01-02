@@ -1,0 +1,287 @@
+((1 2 3 8 9 10 11 13 20 15 21 16 18 23 24 25 101 102 103 104 105 106 201 202 
+     203 (IF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 1)) 
+         (DECISION _ "There's nothing under the cup.") 
+         ((ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ "There's nothing under the cup.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 1)) 
+                   (DECISION _ "~Roll up!  Roll up!~ calls the busker.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 1)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ "There's nothing under the cup.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ "There's nothing under the cup.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 2)) 
+                   (DECISION _ 
+                             "~Who'll come and see my magic?~ calls the busker.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 2)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ "There's nothing under the cup.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ "There's nothing under the cup.")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 3)) 
+                   (DECISION _ 
+                             "~Three perfectly ordinary coloured cups,~ says the busker. He lifts each in turn to show that it is empty. ~Nothing under any of the,~ he says.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 3)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 8)) 
+                   (DECISION _ 
+                             "~Now,~ says the busker, ~to demonstrate that I'm not any prepared equipment, I'd like to do this trick with an object from the audience.~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 8)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 9)) 
+                   (DECISION _ 
+                             "~A small object would be best, but I will consider anything,~ says the busker.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 9)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 10)) 
+                   (DECISION _ 
+                             "~I see that you're worried,~ says the busker. ~This isn't one of those tricks where I smash your watch with a hammer!~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 10)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 11)) 
+                   (DECISION _ 
+                             "~How about you, young lady?~ asks the busker.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 11)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 0) (EQUALS (VAR "verb") 
+                                0) (EQUALS (VAR "state") 13)) (DECISION _ 
+                             "The busker sighs. ~Well if no-one wants to give me anything, I'll use this marble.~ He holds it up and it sparkles in the sunlight. ~You'll just have to trust that it's genuine~")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 0) (EQUALS (VAR "verb") 
+                                0) (EQUALS (VAR "state") 20)) (DECISION _ 
+                             "The busker sighs. ~Well if no-one wants to give me anything, I'll use this marble.~ He holds it up and it sparkles in the sunlight. ~You'll just have to trust that it's genuine~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 0) 
+                        (EQUALS (VAR "state") 20)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 13)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 13)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 13)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 13)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 20)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 20)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 20)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 20)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 13)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 13)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 20)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 20)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 13)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 20)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 0) (EQUALS (VAR "verb") 
+                                5) (EQUALS (VAR "state") 15)) (DECISION 16 
+                             "You lift the cup and discover the marble which the busker retrieves.")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 0) (EQUALS (VAR "verb") 
+                                6) (EQUALS (VAR "state") 15)) (DECISION 16 
+                             "You lift the cup and discover the marble which the busker retrieves.")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 0) (EQUALS (VAR "verb") 
+                                5) (EQUALS (VAR "state") 21)) (DECISION 16 
+                             "You lift the cup and discover the marble which the busker retrieves.")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 0) (EQUALS (VAR "verb") 
+                                6) (EQUALS (VAR "state") 21)) (DECISION 16 
+                             "You lift the cup and discover the marble which the busker retrieves.")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 1) (EQUALS (VAR "verb") 
+                                5) (EQUALS (VAR "state") 15)) (DECISION 300 
+                             "You lift the cup and discover the brass key.  The busker winks at you. ~Take care, now~")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 1) (EQUALS (VAR "verb") 
+                                6) (EQUALS (VAR "state") 15)) (DECISION 300 
+                             "You lift the cup and discover the brass key.  The busker winks at you. ~Take care, now~")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 1) (EQUALS (VAR "verb") 
+                                5) (EQUALS (VAR "state") 21)) (DECISION 300 
+                             "You lift the cup and discover the brass key.  The busker winks at you. ~Take care, now~")) 
+           (ELSEIF (AND (EQUALS (VAR "trickobject") 1) (EQUALS (VAR "verb") 
+                                6) (EQUALS (VAR "state") 21)) (DECISION 300 
+                             "You lift the cup and discover the brass key.  The busker winks at you. ~Take care, now~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 6) 
+                        (EQUALS (VAR "state") 15)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 6) 
+                        (EQUALS (VAR "state") 21)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ 
+                             "~Go on,~ says the busker. ~Guess which one of the cups the object is underneath.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ 
+                             "~Go on,~ says the busker. ~Guess which one of the cups the object is underneath.~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 15)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 15)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 15)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 15)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 21)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 1) 
+                        (EQUALS (VAR "state") 21)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 0) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 21)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "noun") 1) (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 21)) (DECISION _ 
+                             "The busker calls after you as you leave, ~Hey! Don't you want to see the rest of the trick!~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 15)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 15)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 1) (EQUALS (VAR "state") 21)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 2) 
+                        (EQUALS (VAR "state") 21)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 15)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 21)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 16)) 
+                   (DECISION 15 "")) (ELSEIF (AND (EQUALS (VAR "state") 16)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 0) 
+                        (EQUALS (VAR "state") 18)) (DECISION 14 
+                             "~Welcome back,~ says the busker. ~Perhaps you would be so gracious as to help me finish the trick?~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 18)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 23)) 
+                   (DECISION _ 
+                             "~The police constable approaches the table. ~I thinks its under this cup where you put it,~ he says. ~You're not fooling me with your patter.~ He looks under the cup.  There's nothing there. ~Oh!~ he says.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 23)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 24)) 
+                   (DECISION _ 
+                             "The constable surveys the remaining two cups. ~Perhaps it's under this cup then.~  But that one is empty too.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 24)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 25)) 
+                   (DECISION 16 
+                             "The constable says, ~You're a sly one.  The object must be under this cup!~ He looks under the cup and extracts a toffee wrapped in shiny paper, which he expertly unwraps and sticks in his mouth.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 25)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 101)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 101)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 101)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 101)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 101)) 
+                   (DECISION _ 
+                             "~Go on, look under this cup,~ says the busker")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 101)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 102)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 102)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 102)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 102)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 102)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "state") 102)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 103)) (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 103)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 103)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 103)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 103)) 
+                   (DECISION _ 
+                             "~Go on, it won't bite you,~ says the busker")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 103)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 5) (EQUALS (VAR "state") 104)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 104)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 104)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 104)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 104)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "state") 104)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 5) 
+                        (EQUALS (VAR "state") 105)) (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 6) (EQUALS (VAR "state") 105)) 
+                   (DECISION 105 
+                             "Under the cup is a piece of folded paper. You take it and unfold it.  It's you name")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 3) (EQUALS (VAR "state") 105)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 4) (EQUALS (VAR "state") 105)) 
+                   (DECISION _ 
+                             "~I don't mind if you look under the cups,~ says the busker, ~but I'd be grateful if you didn't walk away with them.~")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 105)) 
+                   (DECISION _ 
+                             "~You don't want to look under the cup?~ says the busker. ~Well, see here.~ He lifts the cup to reveal a piece of folded paper, which he unfolds.  It's your name!  The busker presses it into your hand.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 105)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 106)) 
+                   (DECISION 9 
+                             "~Now,~ says the busker, ~I need a small object from the audience for my next trick.~")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 106)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 201)) 
+                   (DECISION _ "~Go on, take the toffee,~ says the busker.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 201)) (DECISION _ "")) 
+           (ELSEIF (AND (EQUALS (VAR "verb") 0) (EQUALS (VAR "state") 202)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "state") 202)) 
+                   (DECISION _ "")) (ELSEIF (AND (EQUALS (VAR "verb") 0) 
+                        (EQUALS (VAR "state") 203)) (DECISION 105 
+                             "~All right, you don't want it, no skin off my nose,~ says the busker.  He tosses it up into the air and it vanishes.")) 
+           (ELSEIF (AND (EQUALS (VAR "state") 203)) (DECISION _ ""))) 
+         (DECISION _ ""))))
