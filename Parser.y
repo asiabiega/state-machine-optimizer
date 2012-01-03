@@ -25,6 +25,7 @@ import AST
 	Wildcard	{ (_,TkWildcard)}
 	Or		{ (_,TkOr)	}
 	Var		{ (_,TkVar)	}
+	Arm		{ (_,TkArm)	}
 %%
 
 character :: { Character }
@@ -40,7 +41,8 @@ rule:		LParen statenumbers statement RParen 	 { ($2, $3) }
 statement :: { Term }
 statement:	LParen If condition statement LParen
 	 		elseifs RParen statement RParen  { TmIf $3 $4 $6 $8 }
-	 	| LParen Decision newstate utterance  	 { TmDecision $3 $4 }
+	 	| LParen Decision newstate utterance
+			RParen 				 { TmDecision $3 $4 }
 		| LParen Case variable LParen arms
 			RParen statement RParen		 { TmCase $3 $5 $7 }
 
@@ -56,7 +58,7 @@ arms:		arm arms				 { $1 : $2 }
     		|					 { [] }
 
 arm :: { (ValueSet, Term) }
-arm:		LParen valueset statement RParen	 { ($2, $3) }
+arm:		LParen Arm valueset statement RParen	 { ($3, $4) }
 
 condition :: { Condition }
 condition:	LParen Equals variable Int RParen	 { TmEquals $3 $4 }
@@ -84,12 +86,15 @@ newstate:	Int					 { TmState $1 }
 utterance :: { Utterance }
 utterance:	String					 { $1 }
 
+values ::	{ [Integer] }
+values:		Int values				 { $1 : $2 }
+      		|					 { [] }
+
 valueset :: { ValueSet }
-valueset:	Int valueset				 { $1 : $2 }
-		| 					 { [] }
+valueset:	LParen values RParen	 		 { $2 }
 
 {
 parseError :: [Token] -> a
-parseError (((line,col),t):xs) = error $ "Parse error at line " ++ (show line) ++ ", column " ++ (show col)
+parseError (((line,col),t):xs) = error $ "Parse error at token " ++ show t ++", line " ++ (show line) ++ ", column " ++ (show col)
 parseError [] = error "Parse error at the end"
 }

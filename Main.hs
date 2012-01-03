@@ -1,4 +1,4 @@
 import Prelude hiding (lex)
 import Lexer
-
-main = getContents >>= print . lex
+import Parser
+main = getContents >>= print . parse . lex
