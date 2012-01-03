@@ -17,10 +17,10 @@ runMachine state_num character env = let t = getStateTerm state_num character in
 eval :: Term -> Env -> Cost -> (Term, Cost)
 
 eval (TmIf cond tt elifs tf) env cost = case evalCondition cond env cost of 
-    (TmTrue, c) -> eval tt env (cost+c)
+    (TmTrue, c) -> eval tt env c
     (TmFalse, c) -> case elifs of 
-        [] -> eval tf env (cost+c)
-        (cnd, term):xs -> eval (TmIf cnd term xs tf) env (cost+c)
+        [] -> eval tf env c
+        (cnd, term):xs -> eval (TmIf cnd term xs tf) env c
 
 eval (TmCase (TmVar x) arms def) env cost = case lookup x env of
     Just val -> let t = chooseCase val arms def in eval t env (cost+11.5)
@@ -44,13 +44,13 @@ evalCondition (TmEquals (TmVar x) val) env cost = case lookup x env of
 
 evalCondition (TmAnd []) env cost = (TmTrue, cost)
 evalCondition (TmAnd (x:xs)) env cost = let (cond, c) = evalCondition x env cost in if cond == TmTrue 
-                                then evalCondition (TmAnd xs) env (cost+c)
-                                else (TmFalse, cost+c)
+                                then evalCondition (TmAnd xs) env c
+                                else (TmFalse, c)
 
 evalCondition (TmOr []) env cost = (TmFalse, cost)
 evalCondition (TmOr (x:xs)) env cost = let (cond, c) = evalCondition x env cost in if cond == TmTrue 
-                                then (TmTrue, cost+c)
-                                else evalCondition (TmOr xs) env (cost+c)
+                                then (TmTrue, c)
+                                else evalCondition (TmOr xs) env c
 
 
 

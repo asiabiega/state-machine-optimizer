@@ -23,7 +23,7 @@ type Cost = Float
 
 type Rule = ([StateNumber], Term)
 type Character = [Rule]
-type Env = [(String, Int)]
+type Env = [(String, Integer)]
 
 
 vars :: Character -> [String]
