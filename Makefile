@@ -6,3 +6,6 @@ Parser.hs: Parser.y
 
 Lexer.hs: Lexer.x
 	alex -g Lexer.x
+
+clean:
+	rm *.hi *.o
