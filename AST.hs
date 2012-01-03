@@ -17,6 +17,7 @@ data Variable = TmVar String
 type StateNumber = Int
 type ValueSet = [Int]
 type Utterance = String
+type Cost = Float
 
 type Rule = ([StateNumber], Term)
 type Character = [Rule]
