@@ -5,17 +5,17 @@ data Term = TmIf Condition Term [(Condition, Term)] Term
             | TmCase Variable [(ValueSet, Term)] Term
             deriving(Eq, Show)
 
-data Condition = TmEquals Variable Int | TmAnd [Condition] | TmOr [Condition] | TmTrue | TmFalse
+data Condition = TmEquals Variable Integer | TmAnd [Condition] | TmOr [Condition] | TmTrue | TmFalse
             deriving(Eq, Show)
 
-data NewState = TmCurrent | TmState Int
+data NewState = TmCurrent | TmState Integer
             deriving(Eq, Show)
 
 data Variable = TmVar String
             deriving(Eq, Show)
 
-type StateNumber = Int
-type ValueSet = [Int]
+type StateNumber = Integer
+type ValueSet = [Integer]
 type Utterance = String
 type Cost = Float
 
