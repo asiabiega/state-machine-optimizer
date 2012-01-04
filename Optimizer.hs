@@ -13,7 +13,7 @@ contradictoryAndRemoval = map contradictoryAndRemovalRule where
 
     contradictoryAndRemovalTerm :: Term -> Term
     contradictoryAndRemovalTerm (TmIf cnd t1 elseifs t2) = TmIf (contradictoryAndRemovalCond cnd) (contradictoryAndRemovalTerm t1)
-        (map (\(c,t) -> (contradictoryAndRemovalCond c, contradictoryAndRemovalTerm t)) elseifs) (contradictoryAndRemovalTerm t2)
+        (map (contradictoryAndRemovalCond *** contradictoryAndRemovalTerm) elseifs) (contradictoryAndRemovalTerm t2)
     contradictoryAndRemovalTerm (TmCase var arms t) = TmCase var (map (second contradictoryAndRemovalTerm) arms) (contradictoryAndRemovalTerm t)
     contradictoryAndRemovalTerm a@(TmDecision _ _) = a
 
@@ -26,9 +26,9 @@ contradictoryAndRemoval = map contradictoryAndRemovalRule where
     cleanAnds :: [Condition] -> State [(Variable, Integer)] Bool
     cleanAnds (TmTrue:cnds) = cleanAnds cnds
     cleanAnds (TmFalse:_) = return False
-    cleanAnds ((TmAnd cnds1):cnds2) = cleanAnds $ cnds1 ++ cnds2
-    cleanAnds ((TmOr cnds1):cnds2) = cleanAnds cnds2 --TODO think what can we do about ORs
-    cleanAnds ((TmEquals v i):cnds) = do
+    cleanAnds (TmAnd cnds1:cnds2) = cleanAnds $ cnds1 ++ cnds2
+    cleanAnds (TmOr _:cnds2) = cleanAnds cnds2 --TODO think what can we do about ORs
+    cleanAnds (TmEquals v i:cnds) = do
         s <- get
         if contradictsSet s (v,i)
             then return False
@@ -40,3 +40,26 @@ contradictoryAndRemoval = map contradictoryAndRemovalRule where
         Nothing -> False
         Just i2 -> i2 /= i
 
+stateNumberWildcarder :: Character -> Character
+stateNumberWildcarder = map stateNumberWildcarderRule where
+    stateNumberWildcarderRule :: Rule -> Rule
+    stateNumberWildcarderRule a@(_:_:_,_) = a
+    stateNumberWildcarderRule ([], _) = error "empty rule"
+    stateNumberWildcarderRule ([n], t) = ([n], evalState (stateNumberWildcarderTerm t) n)
+
+    stateNumberWildcarderTerm :: Term -> State Integer Term --TODO reader monad?
+    stateNumberWildcarderTerm (TmIf cnd t1 elseifs t2) = do
+        mt1 <- stateNumberWildcarderTerm t1
+        mei <- mapM (\(cnd, t) -> do
+            mt <- stateNumberWildcarderTerm t
+            return (cnd, mt)) elseifs
+        mt2 <- stateNumberWildcarderTerm t2
+        return $ TmIf cnd mt1 mei mt2
+    stateNumberWildcarderTerm (TmCase var arms t1) = do
+        mas <- mapM (\(vs, t) -> do
+            mt <- stateNumberWildcarderTerm t
+            return (vs, mt)) arms
+        mt1 <- stateNumberWildcarderTerm t1
+        return $ TmCase var mas mt1
+    stateNumberWildcarderTerm a@(TmDecision TmCurrent _) = return a
+    stateNumberWildcarderTerm a@(TmDecision (TmState i) u) = gets $ \i2 -> if i == i2 then TmDecision TmCurrent u else a
