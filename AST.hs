@@ -7,7 +7,11 @@ data Term = TmIf Condition Term [(Condition, Term)] Term
             | TmCase Variable [(ValueSet, Term)] Term
             deriving(Eq, Show)
 
-data Condition = TmEquals Variable Integer | TmAnd [Condition] | TmOr [Condition] | TmTrue | TmFalse
+data Condition = TmEquals Variable Integer
+            | TmAnd [Condition]
+            | TmOr [Condition]
+            | TmTrue
+            | TmFalse
             deriving(Eq, Show)
 
 data NewState = TmCurrent | TmState Integer
