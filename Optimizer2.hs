@@ -3,6 +3,8 @@ import Prelude
 
 import AST
 
+-------------------------------------------------------------------------------------------------------------
+
 --TODO? : negacja warunków po przejściu do następnego brancha
 --TODO? : uwzględnienie CASE
 
@@ -11,9 +13,13 @@ notAccessibleBranchRemoval = map (\(st, t)-> (st, naBranchRemoval t []))
 
 naBranchRemoval :: Term -> [Condition] -> Term
 naBranchRemoval (TmIf cond tt elifs tf) assumptions = 
-            if contradicts cond assumptions then
+            if cond == TmFalse then
+                naBranchRemoval tf assumptions
+            else if cond == TmTrue then
+                naBranchRemoval tt assumptions
+            else if contradicts cond assumptions then
                 case elifs of
-                    [] -> tf
+                    [] -> (naBranchRemoval tf assumptions)
                     (c, t):xs -> naBranchRemoval (TmIf c t xs tf) assumptions
             else
                 let tt_ = (naBranchRemoval tt (cond:assumptions)) in
@@ -32,3 +38,9 @@ contradictsCond (TmOr conds) cond = all (\x -> contradictsCond x cond) conds
 checkIfContradicts v k (TmEquals v2 k2) = v == v2 && k /= k2
 checkIfContradicts v k (TmAnd conds) = any (checkIfContradicts v k) conds
 checkIfContradicts v k (TmOr conds) = all (checkIfContradicts v k) conds
+
+-------------------------------------------------------------------------------------------------------------
+
+
+
+

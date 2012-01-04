@@ -10,7 +10,11 @@ getStateTerm state_num [] = TmDecision TmCurrent "No such state number"
 getStateTerm state_num (x:xs) = if elem state_num (fst x) then snd x else getStateTerm state_num xs
 
 runMachine :: StateNumber -> Character -> Env-> (Term, Cost)
-runMachine state_num character env = let t = getStateTerm state_num character in eval t env 0
+runMachine state_num character env = let t = getStateTerm state_num character 
+        in let (term, cost) = eval t env 0 in 
+        case term of
+            TmDecision TmCurrent s -> (TmDecision (TmState state_num) s, cost)
+            _ -> (term, cost)
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -26,8 +30,8 @@ eval (TmCase (TmVar x) arms def) env cost = case lookup x env of
     Just val -> let t = chooseCase val arms def in eval t env (cost+11.5)
     Nothing -> eval def env (cost+11.5)
 
---TODO: wildcard + jawnie decision
-eval t env cost = (t, cost + 4)
+eval (TmDecision TmCurrent s) env cost = (TmDecision TmCurrent s, cost + 3)
+eval (TmDecision t s) env cost = (TmDecision t s, cost + 4)
 
 -------------------------------------------------------------------------------------------------------------
 
