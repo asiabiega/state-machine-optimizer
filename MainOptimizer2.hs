@@ -14,7 +14,7 @@ main = do
     let time = read timeArg
     cont <- getContents
     bestSolution <- newMVar 5
-    ast <- timeout (time*1000000) (swapMVar bestSolution 8 >> (return $ notAccessibleBranchRemoval (parse . lex $ cont) ))
+    ast <- timeout (time*1000000) (swapMVar bestSolution 8 >> (return $ sameArgBranchRemoval (parse . lex $ cont) ))
     case ast of
         Nothing -> hPutStrLn stderr "timed out" >> exitFailure
         Just goodAst -> print goodAst >> (takeMVar bestSolution)

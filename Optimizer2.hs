@@ -1,12 +1,13 @@
 module Optimizer2 where
 import Prelude
-
 import AST
 
 -------------------------------------------------------------------------------------------------------------
 
 --TODO? : negacja warunków po przejściu do następnego brancha
 --TODO? : uwzględnienie CASE
+
+--INACCESSIBLE BRANCH REMOVAL
 
 notAccessibleBranchRemoval :: Character -> Character
 notAccessibleBranchRemoval = map (\(st, t)-> (st, naBranchRemoval t []))
@@ -27,6 +28,8 @@ naBranchRemoval (TmIf cond tt elifs tf) assumptions =
                 let tf_ = (naBranchRemoval tf assumptions) in
                 TmIf cond tt_ elifs_ tf_
 
+--recursiveCALLS!!
+
 naBranchRemoval t assuptions = t
 
 contradicts c = any (contradictsCond c)
@@ -41,6 +44,22 @@ checkIfContradicts v k (TmOr conds) = all (checkIfContradicts v k) conds
 
 -------------------------------------------------------------------------------------------------------------
 
+--SAME ARG BRANCH REMOVAL
 
+sameArgBranchRemoval :: Character -> Character
+sameArgBranchRemoval = map (\(st, t)-> (st, saBranchRemoval t))
+
+saBranchRemoval (TmIf cond tt elifs tf) = let l = rmDup $ (cond, tt):elifs in
+    let tt_ = saBranchRemoval tt in
+    let elifs_ = map (\(x,y) -> (x, saBranchRemoval y)) (tail l) in
+    let tf_ = (saBranchRemoval tf) in
+    TmIf cond tt_ elifs_ tf_
+
+--recursive calls!
+
+saBranchRemoval t = t
+
+rmDup [] = []
+rmDup ((cond,term):xs) = (cond,term) : rmDup (filter (\(a,b) -> not(a == cond)) xs)
 
 
