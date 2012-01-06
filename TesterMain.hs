@@ -66,7 +66,7 @@ main = do
                         putStrLn $ "starting state:" ++ (show randomStartingState)
                         putStrLn $ "optimizations" ++ (show randomOptimizationNames)
                         putStrLn $ "difference:" ++ (show (ot, oc)) ++ " " ++ (show (nt, nc))
-                    else putStrLn "."
+                    else putStr "."
 
 randomIndex :: [a] -> IO Int
 randomIndex l = randomRIO (0, length l - 1)
