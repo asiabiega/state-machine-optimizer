@@ -39,6 +39,7 @@ listFiles path = do
 
 main = do
     files <- listFiles "inputs"
+    hSetBuffering stdout NoBuffering
     forever $ do
         file <- randomElem files 
         
