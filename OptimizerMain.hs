@@ -13,7 +13,7 @@ import Optimizer
 import Optimizer2
 
 optimize :: Character -> Character
-optimize = sameArgBranchRemoval . notAccessibleBranchRemoval . stateNumberWildcarder . contradictoryAndRemoval 
+optimize = sameArgBranchRemoval . notAccessibleBranchRemoval . stateNumberWildcarder . contradictoryAndRemoval . trivialAndRemoval
 
 main = do
     (timeArg:args) <- getArgs

@@ -4,7 +4,8 @@ import AST
 
 
 optimizations2 = [(notAccessibleBranchRemoval, "not-accesible-branch-removal"),
-    (sameArgBranchRemoval, "same-arg-branch-removal")]
+    (sameArgBranchRemoval, "same-arg-branch-removal"),
+    (trivialAndRemoval, "trivial-and-removal")]
 -------------------------------------------------------------------------------------------------------------
 
 --TODO? : negacja warunków po przejściu do następnego brancha
@@ -56,7 +57,7 @@ checkIfContradicts v k (TmOr conds) = all (checkIfContradicts v k) conds
 sameArgBranchRemoval :: Character -> Character
 sameArgBranchRemoval = map (\(st, t)-> (st, saBranchRemoval t))
 
-saBranchRemoval (TmIf cond tt elifs tf) = let l = rmDup $ (cond, tt):elifs in
+saBranchRemoval (TmIf cond tt elifs tf) = let l = rmDuplicated $ (cond, tt):elifs in
     let tt_ = saBranchRemoval tt in
     let elifs_ = map (\(x,y) -> (x, saBranchRemoval y)) (tail l) in
     let tf_ = (saBranchRemoval tf) in
@@ -69,7 +70,38 @@ saBranchRemoval (TmCase (TmVar x) arms def) =
 
 saBranchRemoval t = t
 
-rmDup [] = []
-rmDup ((cond,term):xs) = (cond,term) : rmDup (filter (\(a,b) -> not(a == cond)) xs)
+rmDuplicated [] = []
+rmDuplicated ((cond,term):xs) = (cond,term) : rmDuplicated (filter (\(a,b) -> not(a == cond)) xs)
+
+-------------------------------------------------------------------------------------------------------------
+
+--'TRIVIAL AND' REMOVAL
+
+trivialAndRemoval :: Character -> Character
+trivialAndRemoval = map (\(st, t)-> (st, trivialAndTermRemoval t))
+
+trivialAndTermRemoval (TmIf cond tt elifs tf) = 
+    let cond_ = trivialAndConditionRemoval cond in
+    let tt_ = trivialAndTermRemoval tt in
+    let elifs_ = map (\(x,y) -> (trivialAndConditionRemoval x, trivialAndTermRemoval y)) elifs in
+    let tf_ = trivialAndTermRemoval tf in
+    TmIf cond_ tt_ elifs_ tf_
+
+trivialAndTermRemoval (TmCase (TmVar x) arms def) = 
+    let arms_ = map (\(x,y) -> (x, trivialAndTermRemoval y)) arms in
+    let def_ = trivialAndTermRemoval def in
+    TmCase (TmVar x) arms_ def_
+
+trivialAndTermRemoval t = t
+
+
+trivialAndConditionRemoval (TmAnd tests) = 
+    let tests_ = map trivialAndConditionRemoval tests in
+    TmAnd $ rmDuplicatedCond tests_
+trivialAndConditionRemoval (TmOr tests) = TmOr $ map trivialAndConditionRemoval tests
+trivialAndConditionRemoval t = t
+
+rmDuplicatedCond [] = []
+rmDuplicatedCond (cond:xs) = cond : rmDuplicatedCond (filter (\x -> not(x == cond)) xs)
 
 
