@@ -1,11 +1,19 @@
-all: Parser.hs Lexer.hs
-	ghc --make -O2 Main.hs -o smo
+LP=Parser.hs Lexer.hs
+EV=Evaluator.hs EvaluatorMain.hs
+MS=MachineSize.hs MachineSizeMain.hs
+OP=OptimizerMain.hs Optimizer2.hs Optimizer.hs
+SRC=AST.hs ${EV} ${MS} ${OP}
 
-size: Parser.hs Lexer.hs
-	ghc --make -O2 MainSize.hs -o sm_measure
+all: smopt smsize smeval
 
-opti2: Parser.hs Lexer.hs Optimizer2.hs MainOptimizer2.hs
-	ghc --make -O2 MainOptimizer2.hs -o opti2
+smopt: ${LP} ${SRC}
+	ghc --make -O2 OptimizerMain.hs -o smopt
+
+smsize: ${LP} ${SRC}
+	ghc --make -O2 MachineSizeMain.hs -o smsize
+
+smeval: ${LP} ${SRC}
+	ghc --make -O2 EvaluatorMain.hs -o smeval
 
 Parser.hs: Parser.y
 	happy -g Parser.y
