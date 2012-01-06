@@ -4,15 +4,15 @@ MS=MachineSize.hs MachineSizeMain.hs
 OP=OptimizerMain.hs Optimizer2.hs Optimizer.hs
 SRC=AST.hs ${EV} ${MS} ${OP}
 
-all: optimizer size evaluator
+all: smopt smsize smeval
 
-optimizer: ${LP} ${SRC}
+smopt: ${LP} ${SRC}
 	ghc --make -O2 OptimizerMain.hs -o smopt
 
-size: ${LP} ${SRC}
+smsize: ${LP} ${SRC}
 	ghc --make -O2 MachineSizeMain.hs -o smsize
 
-evaluator: ${LP} ${SRC}
+smeval: ${LP} ${SRC}
 	ghc --make -O2 EvaluatorMain.hs -o smeval
 
 Parser.hs: Parser.y
