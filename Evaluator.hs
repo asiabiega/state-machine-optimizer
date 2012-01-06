@@ -1,7 +1,11 @@
 module Evaluator where
-import Prelude
-import Data.List(elem)
+import Prelude hiding (lex)
+import System.Random
+import System.Environment
+
 import AST
+import Parser
+import Lexer
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -9,7 +13,7 @@ getStateTerm :: StateNumber -> Character -> Term
 getStateTerm state_num [] = TmDecision TmCurrent "No such state number"
 getStateTerm state_num (x:xs) = if elem state_num (fst x) then snd x else getStateTerm state_num xs
 
-runMachine :: StateNumber -> Character -> Env-> (Term, Cost)
+runMachine :: StateNumber -> Character -> Env -> (Term, Cost)
 runMachine state_num character env = let t = getStateTerm state_num character 
         in let (term, cost) = eval t env 0 in 
         case term of
@@ -56,5 +60,4 @@ evalCondition (TmOr (x:xs)) env cost = let (cond, c) = evalCondition x env cost 
                                 then (TmTrue, c)
                                 else evalCondition (TmOr xs) env c
 
-
-
+--------------------------------------------------------------------------------------------------------------
