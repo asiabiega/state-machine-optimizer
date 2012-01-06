@@ -25,3 +25,5 @@ mspan arms = let all_labels = concat (map fst arms)
 msizeCondition (TmEquals _ _) = 6
 msizeCondition (TmAnd tests) = sum (map msizeCondition tests)
 msizeCondition (TmOr tests) = sum (map msizeCondition tests)
+msizeCondition TmFalse = 0
+msizeCondition TmTrue = 0

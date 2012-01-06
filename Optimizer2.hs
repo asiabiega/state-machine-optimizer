@@ -31,9 +31,13 @@ naBranchRemoval (TmIf cond tt elifs tf) assumptions =
                 let tf_ = (naBranchRemoval tf assumptions) in
                 TmIf cond tt_ elifs_ tf_
 
---recursiveCALLS!!
+naBranchRemoval (TmCase (TmVar x) arms def) assumptions = 
+            let def_ = (naBranchRemoval def assumptions) in
+            let arms_ = map (\(x,y) -> (x, naBranchRemoval y assumptions)) arms in
+            TmCase (TmVar x) arms_ def_
 
 naBranchRemoval t assuptions = t
+
 
 contradicts c = any (contradictsCond c)
 
@@ -58,7 +62,10 @@ saBranchRemoval (TmIf cond tt elifs tf) = let l = rmDup $ (cond, tt):elifs in
     let tf_ = (saBranchRemoval tf) in
     TmIf cond tt_ elifs_ tf_
 
---recursive calls!
+saBranchRemoval (TmCase (TmVar x) arms def) = 
+            let def_ = saBranchRemoval def in
+            let arms_ = map (\(x,y) -> (x, saBranchRemoval y)) arms in
+            TmCase (TmVar x) arms_ def_
 
 saBranchRemoval t = t
 
