@@ -7,7 +7,7 @@ import Lexer
 import AST
 import qualified GHC.Exts as Happy_GHC_Exts
 
--- parser produced by Happy Version 1.18.6
+-- parser produced by Happy Version 1.18.8
 
 data HappyAbsSyn 
 	= HappyTerminal (Token)
@@ -663,7 +663,8 @@ happyNewToken action sts stk (tk:tks) =
 	_ -> happyError' (tk:tks)
 	}
 
-happyError_ tk tks = happyError' (tk:tks)
+happyError_ 35# tk tks = happyError' tks
+happyError_ _ tk tks = happyError' (tk:tks)
 
 newtype HappyIdentity a = HappyIdentity a
 happyIdentity = HappyIdentity
@@ -835,9 +836,10 @@ happyGoto action j tk st = action j j tk (HappyState action)
 -- Error recovery (1# is the error token)
 
 -- parse error if we are in recovery and we fail again
-happyFail  1# tk old_st _ stk =
+happyFail 1# tk old_st _ stk@(x `HappyStk` _) =
+     let (i) = (case x of { HappyErrorToken (Happy_GHC_Exts.I# (i)) -> i }) in
 --	trace "failing" $ 
-    	happyError_ tk
+        happyError_ i tk
 
 {-  We don't need state discarding for our restricted implementation of
     "error".  In fact, it can cause some bogus parses, so I've disabled it
@@ -885,7 +887,7 @@ happyDontSeq a b = b
 -- of deciding to inline happyGoto everywhere, which increases the size of
 -- the generated parser quite a bit.
 
-{-# LINE 311 "templates/GenericTemplate.hs" #-}
+{-# LINE 312 "templates/GenericTemplate.hs" #-}
 {-# NOINLINE happyShift #-}
 {-# NOINLINE happySpecReduce_0 #-}
 {-# NOINLINE happySpecReduce_1 #-}

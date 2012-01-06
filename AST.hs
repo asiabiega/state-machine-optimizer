@@ -35,7 +35,7 @@ vars :: Character -> [String]
 vars char = map fst (varsVals char)
 
 varsVals :: Character -> [(String, [Integer])]
-varsVals ch = map (foldl (\(_,ts) (b, t) -> ((b,t:ts))) (error "empty group", [])) $ groupBy (on (==) fst) $ sort $ varsVals' ch where
+varsVals ch = map (foldl (\(_,ts) (b, t) -> (b,t:ts)) (error "empty group", [])) $ groupBy (on (==) fst) $ sort $ varsVals' ch where
     varsVals' :: Character -> [(String, Integer)]
     varsVals' rules = vunion $ map varsRule rules
 
@@ -43,7 +43,7 @@ varsVals ch = map (foldl (\(_,ts) (b, t) -> ((b,t:ts))) (error "empty group", []
 
     varsTerm (TmIf cnd t1 elseifs t2) = vunion $ map varsTerm ([t1, t2] ++ map snd elseifs) ++ map varsCnd (cnd : map fst elseifs)
     varsTerm (TmDecision _ _) = []
-    varsTerm (TmCase (TmVar v) arms t) = map (\t -> (v,t)) (concatMap fst arms)  ++  (vunion $ map varsTerm $ t : map snd arms)
+    varsTerm (TmCase (TmVar v) arms t) = map (\t -> (v,t)) (concatMap fst arms)  ++  vunion (map varsTerm $ t : map snd arms)
 
     varsCnd (TmEquals (TmVar v) i) = [(v, i)]
     varsCnd (TmAnd cnds) = vunion $ map varsCnd cnds

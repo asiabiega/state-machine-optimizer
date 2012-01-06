@@ -21,7 +21,7 @@ main = do
         [] -> error "no args supplied, use one Integer to set the machine state"
         [n] -> do 
             renv <- randomEnv char
-            putStrLn $ "env: " ++ (show renv)
+            putStrLn $ "env: " ++ show renv
             let (t, c) = runMachine (read n) char renv
-            putStrLn (show t) 
-            putStrLn $ "cost " ++ (show c)
+            print t
+            putStrLn $ "cost " ++ show c

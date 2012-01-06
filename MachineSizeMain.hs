@@ -6,4 +6,4 @@ import MachineSize
 main = do
     cont <- getContents
     let ast = parse . lex $ cont
-    putStrLn $ "machine size: " ++ (show $ msize ast)
+    putStrLn $ "machine size: " ++ show (msize ast)

@@ -25,6 +25,6 @@ main = do
     case ast of
         Nothing -> hPutStrLn stderr "timed out" 
         Just goodAst -> do
-            putStrLn $ "old size: " ++ (show $ msize oldAst) --(takeMVar bestSolution) --TODO print new ast
-            putStrLn $ "new size: " ++ (show $ msize goodAst)
-            putStrLn $ "delta:" ++ (show $ msize oldAst - msize goodAst)
+            putStrLn $ "old size: " ++ show ( msize oldAst) --(takeMVar bestSolution) --TODO print new ast
+            putStrLn $ "new size: " ++ show (msize goodAst)
+            putStrLn $ "delta:" ++ show (msize oldAst - msize goodAst)
