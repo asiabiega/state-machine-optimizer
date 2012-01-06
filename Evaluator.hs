@@ -61,3 +61,7 @@ evalCondition (TmOr (x:xs)) env cost = let (cond, c) = evalCondition x env cost 
                                 else evalCondition (TmOr xs) env c
 
 --------------------------------------------------------------------------------------------------------------
+randomEnv :: Character -> IO Env
+randomEnv char = do
+    let vv = varsVals char
+    mapM (\(vr, vls) -> randomRIO (0, length vls - 1) >>= \ridx -> return (vr, vls !! ridx)) vv

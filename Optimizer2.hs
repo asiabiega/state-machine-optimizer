@@ -2,6 +2,9 @@ module Optimizer2 where
 import Prelude
 import AST
 
+
+optimizations2 = [(notAccessibleBranchRemoval, "not-accesible-branch-removal"),
+    (sameArgBranchRemoval, "same-arg-branch-removal")]
 -------------------------------------------------------------------------------------------------------------
 
 --TODO? : negacja warunków po przejściu do następnego brancha

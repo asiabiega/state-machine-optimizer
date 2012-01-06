@@ -2,9 +2,9 @@ LP=Parser.hs Lexer.hs
 EV=Evaluator.hs EvaluatorMain.hs
 MS=MachineSize.hs MachineSizeMain.hs
 OP=OptimizerMain.hs Optimizer2.hs Optimizer.hs
-SRC=AST.hs ${EV} ${MS} ${OP}
+SRC=AST.hs TesterMain.hs ${EV} ${MS} ${OP}
 
-all: smopt smsize smeval
+all: smopt smsize smeval smtest
 
 smopt: ${LP} ${SRC}
 	ghc --make -O2 OptimizerMain.hs -o smopt
@@ -14,6 +14,9 @@ smsize: ${LP} ${SRC}
 
 smeval: ${LP} ${SRC}
 	ghc --make -O2 EvaluatorMain.hs -o smeval
+
+smtest: ${LP} ${SRC}
+	ghc --make -O2 TesterMain.hs -o smtest
 
 Parser.hs: Parser.y
 	happy -g Parser.y

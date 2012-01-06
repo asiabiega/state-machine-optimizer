@@ -4,6 +4,8 @@ import Control.Monad.State
 
 import AST
 
+optimizations = [(contradictoryAndRemoval, "contradictory-and-removal"),
+    (stateNumberWildcarder, "state-number-wildcarder")]
 
 --contradictory and condition removal, it changes the whole condition to TmFalse, when TmAnd conditions are contradictory
 contradictoryAndRemoval :: Character -> Character

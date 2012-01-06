@@ -30,6 +30,8 @@ type Rule = ([StateNumber], Term)
 type Character = [Rule]
 type Env = [(String, Integer)]
 
+startingStates :: Character -> [StateNumber]
+startingStates = concatMap fst
 
 vars :: Character -> [String]
 vars char = map fst (varsVals char)
