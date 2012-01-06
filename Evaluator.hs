@@ -56,5 +56,8 @@ evalCondition (TmOr (x:xs)) env cost = let (cond, c) = evalCondition x env cost 
                                 then (TmTrue, c)
                                 else evalCondition (TmOr xs) env c
 
+evalCondition TmTrue _ cost = (TmTrue, cost)
+evalCondition TmFalse _ cost = (TmFalse, cost)
+
 
 
