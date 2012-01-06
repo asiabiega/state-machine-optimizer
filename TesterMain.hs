@@ -59,7 +59,7 @@ main = do
             Just newAst -> do
                 let (ot, oc) = runMachine randomStartingState oldAst renv
                 let (nt, nc) = runMachine randomStartingState newAst renv
-                if ot /= nt || oc /= nc
+                if ot /= nt
                     then do
                         putStrLn $ "file:" ++ (show file)
                         putStrLn $ "env:" ++ (show renv)
