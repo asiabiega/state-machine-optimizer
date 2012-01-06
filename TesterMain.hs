@@ -61,6 +61,7 @@ main = do
                 let (nt, nc) = runMachine randomStartingState newAst renv
                 if ot /= nt
                     then do
+                        putStrLn ""
                         putStrLn $ "file:" ++ (show file)
                         putStrLn $ "env:" ++ (show renv)
                         putStrLn $ "starting state:" ++ (show randomStartingState)
