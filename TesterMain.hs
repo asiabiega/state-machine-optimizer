@@ -39,6 +39,7 @@ listFiles path = do
 
 main = do
     files <- listFiles "inputs"
+    hSetBuffering stdout NoBuffering
     forever $ do
         file <- randomElem files 
         
@@ -61,12 +62,13 @@ main = do
                 let (nt, nc) = runMachine randomStartingState newAst renv
                 if ot /= nt
                     then do
+                        putStrLn ""
                         putStrLn $ "file:" ++ (show file)
                         putStrLn $ "env:" ++ (show renv)
                         putStrLn $ "starting state:" ++ (show randomStartingState)
                         putStrLn $ "optimizations" ++ (show randomOptimizationNames)
                         putStrLn $ "difference:" ++ (show (ot, oc)) ++ " " ++ (show (nt, nc))
-                    else putStrLn "."
+                    else putStr "."
 
 randomIndex :: [a] -> IO Int
 randomIndex l = randomRIO (0, length l - 1)
