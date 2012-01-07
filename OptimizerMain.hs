@@ -1,9 +1,7 @@
 import Prelude hiding (lex)
-import Data.Ratio
 import System.Timeout
 import System.Environment
 import System.IO
-import System.Exit
 import Control.Concurrent.MVar
 
 import Lexer
@@ -24,6 +22,7 @@ sizePairContent cont = do
     ast <- return . optimize $ oldAst
     return (oldSize, msize ast)
 
+main :: IO ()
 main = do
     [arg] <- getArgs
     case arg of
@@ -35,7 +34,7 @@ main = do
             putStrLn $ "old size sum: " ++ show oldSizeSum
             putStrLn $ "new size sum: " ++ show newSizeSum
             putStrLn $ "sum delta: " ++ show (oldSizeSum - newSizeSum) ++ " (" ++
-                 show (100.0 - (fromIntegral newSizeSum / fromIntegral oldSizeSum * 100.0)) ++ "% reduction)"
+                 show (100.0 - (fromIntegral newSizeSum / fromIntegral oldSizeSum * 100.0) :: Double) ++ "% reduction)"
 
         _ -> do
             let time = read arg
@@ -46,6 +45,7 @@ main = do
             case ast of
                 Nothing -> hPutStrLn stderr "timed out"
                 Just goodAst -> do
-                    putStrLn $ "old size: " ++ show ( msize oldAst) --(takeMVar bestSolution) --TODO print new ast
+                    putStrLn $ pp goodAst
+                    putStrLn $ "old size: " ++ show ( msize oldAst) --(takeMVar bestSolution) 
                     putStrLn $ "new size: " ++ show (msize goodAst)
                     putStrLn $ "delta:" ++ show (msize oldAst - msize goodAst)
