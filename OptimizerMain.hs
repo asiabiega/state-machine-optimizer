@@ -44,8 +44,12 @@ main = do
             ast <- timeout (time*1000000) (return . optimize $ oldAst)
             case ast of
                 Nothing -> hPutStrLn stderr "timed out"
-                Just goodAst -> do
-                    putStrLn $ pp goodAst
-                    putStrLn $ "old size: " ++ show ( msize oldAst) --(takeMVar bestSolution) 
-                    putStrLn $ "new size: " ++ show (msize goodAst)
-                    putStrLn $ "delta:" ++ show (msize oldAst - msize goodAst)
+                Just newAst -> do
+                    let oldSize = msize oldAst
+                    let newSize = msize newAst
+                    putStrLn $ pp newAst
+                    putStrLn $ "old size: " ++ show oldSize --(takeMVar bestSolution)
+                    putStrLn $ "new size: " ++ show newSize
+                    putStrLn $ "delta:" ++ show (oldSize - newSize) ++ " (" ++
+                        show (100.0 - (fromIntegral newSize / fromIntegral oldSize * 100.0) :: Double) ++ "% reduction)"
+
