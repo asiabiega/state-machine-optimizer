@@ -7,7 +7,11 @@ import AST
 optimizations = [(contradictoryAndRemoval, "contradictory-and-removal"),
     (stateNumberWildcarder, "state-number-wildcarder")]
 
---contradictory and condition removal, it changes the whole condition to TmFalse, when TmAnd conditions are contradictory
+-- | Applies given optimizations, until a fixpoint is reached
+--fixOptimizations opts 
+
+
+-- | Contradictory and condition removal, it changes the whole condition to TmFalse, when TmAnd conditions are contradictory
 contradictoryAndRemoval :: Character -> Character
 contradictoryAndRemoval = map contradictoryAndRemovalRule where
     contradictoryAndRemovalRule :: Rule -> Rule
@@ -42,6 +46,7 @@ contradictoryAndRemoval = map contradictoryAndRemovalRule where
         Nothing -> False
         Just i2 -> i2 /= i
 
+-- | State number wildcarder, it changes an explicit state in a TmDecision statement to a wildcard if able
 stateNumberWildcarder :: Character -> Character
 stateNumberWildcarder = map stateNumberWildcarderRule where
     stateNumberWildcarderRule :: Rule -> Rule

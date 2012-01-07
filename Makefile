@@ -2,7 +2,7 @@ LP=Parser.hs Lexer.hs
 EV=Evaluator.hs EvaluatorMain.hs
 MS=MachineSize.hs MachineSizeMain.hs
 OP=OptimizerMain.hs Optimizer2.hs Optimizer.hs
-SRC=AST.hs TesterMain.hs ${EV} ${MS} ${OP}
+SRC=AST.hs TesterMain.hs ${EV} ${MS} ${OP} FileUtils.hs
 
 all: smopt smsize smeval smtest
 

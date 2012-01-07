@@ -15,7 +15,7 @@ main = do
     case args of
         (_:_:_) -> error "too many args supplied, use one Integer to set the machine state"
         [] -> error "no args supplied, use one Integer to set the machine state"
-        [n] -> do 
+        [n] -> do
             renv <- randomEnv char
             putStrLn $ "env: " ++ show renv
             let (t, c) = runMachine (read n) char renv
