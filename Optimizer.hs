@@ -8,8 +8,10 @@ optimizations = [(contradictoryAndRemoval, "contradictory-and-removal"),
     (stateNumberWildcarder, "state-number-wildcarder")]
 
 -- | Applies given optimizations, until a fixpoint is reached
---fixOptimizations opts 
-
+fixOptimizations opt char = let ochar = opt char in
+    if ochar == char
+        then ochar
+        else fixOptimizations opt ochar
 
 -- | Contradictory and condition removal, it changes the whole condition to TmFalse, when TmAnd conditions are contradictory
 contradictoryAndRemoval :: Character -> Character
