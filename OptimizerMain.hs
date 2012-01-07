@@ -29,7 +29,7 @@ main = do
         "-a" -> do
             files <- listFiles "inputs/"
             contentlist <- mapM readFile files
-            sizelist <- mapM (\c -> sizePairContent c) contentlist
+            sizelist <- mapM sizePairContent contentlist
             let (oldSizeSum, newSizeSum) = foldl (\(x,y) (x2, y2) -> (x+x2, y+y2)) (0,0) sizelist
             putStrLn $ "old size sum: " ++ show oldSizeSum
             putStrLn $ "new size sum: " ++ show newSizeSum

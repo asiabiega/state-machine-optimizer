@@ -35,7 +35,7 @@ pp :: Character -> String
 pp = render . ppChar
 
 ppChar :: Character -> Doc
-ppChar rules = parens $ (nest 1 . vcat . map ppRule $ rules)
+ppChar rules = parens . nest 1 . vcat . map ppRule $ rules
 
 ppRule :: Rule -> Doc
 ppRule (statenums, term) = parens $ ppStateNums statenums <+> ppTerm term
@@ -45,14 +45,14 @@ ppStateNums = hsep . map integer
 
 ppTerm :: Term -> Doc
 ppTerm (TmIf cond term elseifs term2) = parens $ text "IF" <+> ppCond cond $$
-    (nest 1 $ ppTerm term
+    nest 1 (ppTerm term
     $$ parens (vcat $ map ppElseif elseifs) $$ ppTerm term2)
 ppTerm (TmDecision (TmState newstate) utterance) = parens $ text "DECISION" <+> integer newstate <+> doubleQuotes (text utterance)
 ppTerm (TmDecision TmCurrent utterance)          = parens $ text "DECISION" <+> text "_"         <+> doubleQuotes (text utterance)
-ppTerm (TmCase var arms term) = parens $ text "CASE" <+> ppVar var <+> parens (vcat $ map ppArm arms) <+> (nest 1 (ppTerm term))
+ppTerm (TmCase var arms term) = parens $ text "CASE" <+> ppVar var <+> parens (vcat $ map ppArm arms) <+> nest 1 (ppTerm term)
 
 ppVar :: Variable -> Doc
-ppVar (TmVar v) = parens $ text "VAR" <+> (doubleQuotes $ text v)
+ppVar (TmVar v) = parens $ text "VAR" <+> doubleQuotes (text v)
 
 ppCond :: Condition -> Doc
 ppCond (TmEquals var i) = parens $ text "EQUALS" <+> ppVar var <+> integer i
