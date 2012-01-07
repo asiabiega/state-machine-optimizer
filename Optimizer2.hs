@@ -2,10 +2,9 @@ module Optimizer2 where
 import Prelude
 import AST
 
-
-optimizations2 = [(notAccessibleBranchRemoval, "not-accesible-branch-removal"),
-    (sameArgBranchRemoval, "same-arg-branch-removal"),
-    (trivialAndRemoval, "trivial-and-removal")]
+optimizations2 = [(notAccessibleBranchRemoval, "not-accesible-branch-removal")
+                 ,(sameArgBranchRemoval, "same-arg-branch-removal")
+                 ,(trivialAndRemoval, "trivial-and-removal")]
 -------------------------------------------------------------------------------------------------------------
 
 --TODO? : negacja warunków po przejściu do następnego brancha
@@ -103,5 +102,3 @@ trivialAndConditionRemoval t = t
 
 rmDuplicatedCond [] = []
 rmDuplicatedCond (cond:xs) = cond : rmDuplicatedCond (filter (\x -> not(x == cond)) xs)
-
-

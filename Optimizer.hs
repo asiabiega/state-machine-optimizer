@@ -1,13 +1,35 @@
 module Optimizer where
 import Control.Arrow
 import Control.Monad.State
+import Control.Concurrent.MVar
+import Data.List
 
+import Optimizer2
+import MachineSize
 import AST
 
-optimizations = [(contradictoryAndRemoval, "contradictory-and-removal"),
-    (stateNumberWildcarder, "state-number-wildcarder")]
+changeOrder :: Character -> MVar (Integer, Character) -> IO ()
+changeOrder char mvar = forever $ do
+        let clist = charToConditionList char
+        newAst <- fmap fastOptimizations (randomOrderAst clist)
+        let newSize = msize newAst
+        modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize then return (newSize, newAst) else return (oldSize, oldAst)
 
--- | Applies given optimizations, until a fixpoint is reached
+charToConditionList :: Character -> [([Condition], Term)] --no AND nor OR conditions, terms - only decisions
+charToConditionList = undefined
+
+randomOrderAst :: [([Condition], Term)] -> IO Character
+randomOrderAst = undefined
+
+fastOptimizations :: Character -> Character
+fastOptimizations = fixOptimizations $ foldl' (.) id (map fst $ optimizations ++ optimizations2)
+
+optimizations :: [(Character -> Character, String)]
+optimizations = [(contradictoryAndRemoval, "contradictory-and-removal")
+                ,(stateNumberWildcarder, "state-number-wildcarder")]
+
+-- | Applies given optimization, until a fixpoint is reached
+fixOptimizations :: (Character -> Character) -> Character -> Character
 fixOptimizations opt char = let ochar = opt char in
     if ochar == char
         then ochar
