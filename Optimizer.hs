@@ -1,5 +1,4 @@
 module Optimizer where
-import Control.Arrow
 import Control.Monad.State
 import Control.Concurrent.MVar
 import Data.List
@@ -10,7 +9,7 @@ import AST
 
 
 changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
-changeOrder char state mvar = forever $ do
+changeOrder char state mvar = do
         let clist = charToConditionList char
         randomAst <- randomOrderAst clist
         let (newAst, newState) = runState (optimize randomAst) state
@@ -18,9 +17,16 @@ changeOrder char state mvar = forever $ do
         modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
             then return (newSize, newAst)
             else return (oldSize, oldAst)
+        changeOrder char newState mvar
 
 optimize :: Character -> Tagger Character
-optimize char = (return . sameArgBranchRemoval $ char) >>= (return . notAccessibleBranchRemoval) >>= trivialAndRemoval
+optimize = optimize' (map fst optimizations)
+
+optimize' :: [Character -> Tagger Character] -> Character -> Tagger Character
+optimize' (op:ops) char = do
+    ochar <- op char
+    optimize' ops ochar
+optimize' [] char = return char
 
 charToConditionList :: Character -> [([Condition], Term)] --no AND nor OR conditions, terms - only decisions
 charToConditionList = undefined
@@ -32,7 +38,7 @@ optimizations :: [(Character -> Tagger Character, String)]
 optimizations = optimizations1 ++ optimizations2
 
 optimizations1 :: [(Character -> Tagger Character, String)]
-optimizations1 = [] --[(contradictoryAndRemoval, "contradictory-and-removal")
+optimizations1 = [(contradictoryAndRemoval, "contradictory-and-removal")]
 --                ,(stateNumberWildcarder, "state-number-wildcarder")
 --                ,(ifCaseInterchange, "if-case-interchange")]
 
@@ -42,32 +48,47 @@ fixOptimizations opt char = let ochar = opt char in
     if ochar == char
         then ochar
         else fixOptimizations opt ochar
-{-
+
 
 -- | Contradictory and condition removal, it changes the whole condition to TmFalse, when TmAnd conditions are contradictory
-contradictoryAndRemoval :: Character -> Character
-contradictoryAndRemoval = map contradictoryAndRemovalRule where
-    contradictoryAndRemovalRule :: Rule -> Rule
-    contradictoryAndRemovalRule (stnums, t) = (stnums, contradictoryAndRemovalTerm t)
+contradictoryAndRemoval :: Character -> Tagger Character
+contradictoryAndRemoval = mapM contradictoryAndRemovalRule where
+    contradictoryAndRemovalRule :: Rule -> Tagger Rule
+    contradictoryAndRemovalRule (stnums, t) = do { mt <- contradictoryAndRemovalTerm t; return (stnums, mt)}
 
-    contradictoryAndRemovalTerm :: Term -> Term
-    contradictoryAndRemovalTerm (TmIf cnd t1 elseifs t2) = TmIf (contradictoryAndRemovalCond cnd) (contradictoryAndRemovalTerm t1)
-        (map (contradictoryAndRemovalCond *** contradictoryAndRemovalTerm) elseifs) (contradictoryAndRemovalTerm t2)
-    contradictoryAndRemovalTerm (TmCase var arms t) = TmCase var (map (second contradictoryAndRemovalTerm) arms) (contradictoryAndRemovalTerm t)
-    contradictoryAndRemovalTerm a@(TmDecision _ _) = a
+    contradictoryAndRemovalTerm :: Term -> Tagger Term
+    contradictoryAndRemovalTerm (TmIf cnd t1 elseifs t2) = do
+        mcnd <- contradictoryAndRemovalCond cnd
+        mt1 <- contradictoryAndRemovalTerm t1
+        mtei <- mapM (\(eic, eit) -> do { meic <- contradictoryAndRemovalCond eic;
+                                          meit <- contradictoryAndRemovalTerm eit;
+                                          return (meic, meit)}) elseifs
+        mt2 <- contradictoryAndRemovalTerm t2
+        return $ TmIf mcnd mt1 mtei mt2
 
-    contradictoryAndRemovalCond :: Condition -> Condition
-    contradictoryAndRemovalCond (TmAnd cnds) = let newCnds = map contradictoryAndRemovalCond cnds in
-        if evalState (cleanAnds newCnds) [] then TmAnd newCnds else TmFalse
-    contradictoryAndRemovalCond (TmOr cnds) = TmOr $ map contradictoryAndRemovalCond cnds
-    contradictoryAndRemovalCond a = a
+    contradictoryAndRemovalTerm (TmCase var arms t) = do
+        marms <- mapM (\(vs, at) -> do { mat <- contradictoryAndRemovalTerm at; return (vs, mat)}) arms
+        mt <- contradictoryAndRemovalTerm t
+        return $ TmCase var marms mt
+    contradictoryAndRemovalTerm a@(TmDecision _ _) = return a
+
+    contradictoryAndRemovalCond :: Condition -> Tagger Condition
+    contradictoryAndRemovalCond (TmAnd cnds _) = do
+        newCnds <- mapM contradictoryAndRemovalCond cnds
+        if evalState (cleanAnds newCnds) []
+            then cachedCondition $ TmAnd newCnds 0
+            else return TmFalse
+    contradictoryAndRemovalCond (TmOr cnds _) = do
+        newCnds <- mapM contradictoryAndRemovalCond cnds
+        cachedCondition $ TmOr newCnds 0
+    contradictoryAndRemovalCond a = return a
 
     cleanAnds :: [Condition] -> State [(Variable, Integer)] Bool
     cleanAnds (TmTrue:cnds) = cleanAnds cnds
     cleanAnds (TmFalse:_) = return False
-    cleanAnds (TmAnd cnds1:cnds2) = cleanAnds $ cnds1 ++ cnds2
-    cleanAnds (TmOr _:cnds2) = cleanAnds cnds2 --TODO think what can we do about ORs
-    cleanAnds (TmEquals v i:cnds) = do
+    cleanAnds (TmAnd cnds1 _:cnds2) = cleanAnds $ cnds1 ++ cnds2
+    cleanAnds (TmOr _ _:cnds2) = cleanAnds cnds2 --TODO think what can we do about ORs
+    cleanAnds (TmEquals v i _:cnds) = do
         s <- get
         if contradictsSet s (v,i)
             then return False
@@ -79,6 +100,7 @@ contradictoryAndRemoval = map contradictoryAndRemovalRule where
         Nothing -> False
         Just i2 -> i2 /= i
 
+{-
 -- | State number wildcarder, it changes an explicit state in a TmDecision statement to a wildcard if able
 stateNumberWildcarder :: Character -> Character
 stateNumberWildcarder = map stateNumberWildcarderRule where

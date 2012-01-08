@@ -1,28 +1,24 @@
 module MachineSize where
 import Prelude hiding (lex)
-import System.Timeout
-import System.Environment
-import System.IO
-import System.Exit
-import Control.Concurrent.MVar
 
-import Lexer
-import Parser
 import AST
 
+msize :: Character -> Integer
 msize character = sum (map (msizeTerm.snd) character)
 
+msizeTerm :: Term -> Integer
 msizeTerm (TmIf cond tt elifs tf) = let msize_elifs = sum (map (\(x,y) -> (msizeCondition x) + (msizeTerm y)) elifs)
     in (msizeCondition cond) + (msizeTerm tt) + (msize_elifs) + (msizeTerm tf)
 msizeTerm (TmDecision TmCurrent _) = 3
 msizeTerm (TmDecision _ _) = 4
-msizeTerm (TmCase v arms def) = let msize_arms = sum (map (\(_,y) -> (msizeTerm y)) arms)
+msizeTerm (TmCase _ arms def) = let msize_arms = sum (map (\(_,y) -> (msizeTerm y)) arms)
     in 10 + msize_arms + (mspan arms) + (msizeTerm def)
 
 mspan :: [(ValueSet, Term)] -> Integer
 mspan arms = let all_labels = concat (map fst arms) in
     maximum all_labels - minimum all_labels + 1
 
+msizeCondition :: Condition -> Integer
 msizeCondition (TmEquals _ _ _) = 6
 msizeCondition (TmAnd tests _) = sum (map msizeCondition tests)
 msizeCondition (TmOr tests _) = sum (map msizeCondition tests)

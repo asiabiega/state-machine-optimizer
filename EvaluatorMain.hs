@@ -8,7 +8,6 @@ import Lexer
 import Evaluator
 import AST
 
-
 main :: IO ()
 main = do
     cont <- getContents

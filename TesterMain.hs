@@ -25,11 +25,11 @@ main = do
         file <- randomElem files
         cont <- readFile file
 
-        (randomOptimizationsWithNames) <- filterM (const (randomIO :: IO Bool)) optimizations
-        let randomOptimizations = foldl (>>=) return $ map fst randomOptimizationsWithNames
+        randomOptimizationsWithNames <- filterM (const (randomIO :: IO Bool)) optimizations
+        let randomOptimizations =  map fst randomOptimizationsWithNames
         let randomOptimizationNames = map snd randomOptimizationsWithNames
 
-        let ((oldAst, _), (newAst, _)) = oldNewAstWithSize randomOptimizations cont
+        ((oldAst, _), (newAst, _)) <- oldNewAstWithSize (optimize' randomOptimizations) cont
 
         renv <- randomEnv oldAst
 

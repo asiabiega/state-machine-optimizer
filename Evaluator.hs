@@ -1,11 +1,8 @@
 module Evaluator where
 import Prelude hiding (lex)
 import System.Random
-import System.Environment
 
 import AST
-import Parser
-import Lexer
 
 -------------------------------------------------------------------------------------------------------------
 
