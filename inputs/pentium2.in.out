@@ -1,0 +1,7 @@
+((0 (IF (AND)
+      (DECISION _ "Found instruction rel32")
+      ()
+      (DECISION 1 "Did not find an instruction"))))
+old size: 8
+new size: 7
+delta:1 (12.5% reduction)

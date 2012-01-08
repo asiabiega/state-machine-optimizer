@@ -1,0 +1,9 @@
+((0 (IF (AND (EQUALS (VAR "sbz_at_0") 0)
+             (EQUALS (VAR "opfmt_at_0") 0))
+      (DECISION _ "Found instruction rmode")
+      ((ELSEIF (AND (EQUALS (VAR "opfmt_at_0") 1))
+         (DECISION _ "Found instruction imode")))
+      (DECISION 1 "Did not find an instruction"))))
+old size: 30
+new size: 28
+delta:2 (6.666666666666667% reduction)

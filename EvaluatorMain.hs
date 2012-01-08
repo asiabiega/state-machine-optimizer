@@ -1,6 +1,5 @@
 import Prelude hiding (lex)
 import System.Environment
-import System.Random
 import Control.Monad.State
 
 import Parser
