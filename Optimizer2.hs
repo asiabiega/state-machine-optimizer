@@ -29,7 +29,7 @@ termToConditionList (TmIf cond tt elifs tf) cnd =
 termToConditionList (TmCase (TmVar x) arms def) cnd = 
     let cond_def = termToConditionList def cnd in
     let cond_arms = map (\(vals, t) -> (vals, termToConditionList t cnd)) arms in
-    let cond_arms_ = concatMap (\(vals, cl) -> [ ( (True, TmEquals (TmVar x) p):q, t) | p <- vals, (q,t) <- cl ]) cond_arms in
+    let cond_arms_ = concatMap (\(vals, cl) -> [ ( (True, TmEquals (TmVar x) p 0):q, t) | p <- vals, (q,t) <- cl ]) cond_arms in
     cond_def ++ cond_arms_
 
 termToConditionList (TmDecision s u) cond = [(cond, TmDecision s u)]

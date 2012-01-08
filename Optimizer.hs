@@ -2,21 +2,12 @@ module Optimizer where
 import Control.Monad.State
 import Control.Concurrent.MVar
 import Data.List
+import System.Random
 
 import Optimizer2
 import MachineSize
 import AST
 
-changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
-changeOrder char oldState mvar = do
-        let clist = charToConditionList char
-        randomAst <- randomOrderAst (vars char) clist
-        let (newAst, newState) = runState (optimize randomAst) oldState
-        let newSize = msize newAst
-        modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
-            then return (newSize, newAst)
-            else return (oldSize, oldAst)
-        changeOrder char newState mvar
 
 optimize :: Character -> Tagger Character
 optimize = optimize' (map fst optimizations)
@@ -27,31 +18,43 @@ optimize' (op:ops) char = do
     optimize' ops ochar
 optimize' [] char = return char
 
-randomIndex :: [a] -> IO Int
-randomIndex l = randomRIO (0, length l - 1)
-
-randomElem :: [a] -> IO a
-randomElem l = do
-    ridx <- randomIndex l
-    return $ l !! ridx
-
-charToConditionList :: Character -> [([Condition], Term)] --no AND nor OR conditions, terms - only decisions
+charToConditionList :: Character -> [(StateNumber, [([(Bool, Condition)], Term)])] --no AND nor OR conditions, terms - only decisions
 charToConditionList = undefined
 
-randomOrderAst :: [String] -> [([Condition], Term)] -> IO Character
-randomOrderAst vars clist = mapM randomOrderRule vars clist where --clist to this rule's list
-    randomOrderRule vars clist stateNum = do
-        rterm <- randomOrderTerm
-        return (stateNum, rterm)
+changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
+changeOrder char oldState mvar = do
+        let clist = charToConditionList char
+        randomAst <- randomOrderAst (varsVals char) clist
+        let (newAst, newState) = runState (optimize randomAst) oldState
+        let newSize = msize newAst
+        modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
+            then return (newSize, newAst)
+            else return (oldSize, oldAst)
+        changeOrder char newState mvar
 
-    randomOrderTerm = do
-        (rv, rest) <- randomElemWithRest vars
-        let (arms, def) = armsDefFromClist rv clist
-        return $ TmCase (TmVar rv) arms def
+randomOrderAst :: [VarUniverse] -> [(StateNumber, [([(Bool, Condition)], Term)])] -> IO Character
+randomOrderAst vars clists = mapM (randomOrderRule vars) clists where --clist to this rule's list
+    randomOrderRule :: [VarUniverse] -> (StateNumber, [([(Bool, Condition)], Term)]) -> IO Rule
+    randomOrderRule vars (stateNum, clist) = do
+        rterm <- randomOrderTerm vars clist
+        return ([stateNum], rterm)
 
-randomElemWithRest els = do
-    rel <- randomElem
-    return (rel, delete rel els)
+    randomOrderTerm :: [VarUniverse] -> [([(Bool, Condition)], Term)] -> IO Term
+    randomOrderTerm [] [([], term)] = return term
+    randomOrderTerm (v:vars) clist = do
+        ((rvar,rvals), rest) <- randomElemWithRest (v:vars)
+        (arms, def) <- armsDefFromClist rvar rvals rest clist
+        return $ TmCase (TmVar rvar) arms def
+    randomOrderTerm a b = error $ "randomOrderTerm " ++ show a ++ " " ++ show b
+
+    armsDefFromClist var vals rest clist = do
+       (arms, clistRest) <- armsFromClist var vals rest clist
+       def <- randomOrderTerm rest clistRest
+       return (arms, def)
+
+    armsFromClist var vals rest clist = undefined --mapM (\val -> armFromClist var val rest clist) vals
+
+    armFromClist var val rest clist = undefined
 
 optimizations :: [(Character -> Tagger Character, String)]
 optimizations = optimizations1 ++ optimizations2
@@ -223,3 +226,17 @@ ifCaseInterchange = mapM ifCaseInterchangeRule where
 
     simplifyArms ((ns, t):arms) = map (\i -> ([i], t)) ns ++ simplifyArms arms
     simplifyArms [] = []
+
+
+randomIndex :: [a] -> IO Int
+randomIndex l = randomRIO (0, length l - 1)
+
+randomElem :: [a] -> IO a
+randomElem l = do
+    ridx <- randomIndex l
+    return $ l !! ridx
+
+randomElemWithRest :: Eq a => [a] -> IO (a, [a])
+randomElemWithRest els = do
+    rel <- randomElem els
+    return (rel, delete rel els)
