@@ -39,10 +39,3 @@ main = do
                 putStrLn $ "difference:" ++ show (ot, oc) ++ " " ++ show (nt, nc)
             else putStr "."
 
-randomIndex :: [a] -> IO Int
-randomIndex l = randomRIO (0, length l - 1)
-
-randomElem :: [a] -> IO a
-randomElem l = do
-    ridx <- randomIndex l
-    return $ l !! ridx

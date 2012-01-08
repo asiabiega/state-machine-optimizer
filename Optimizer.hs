@@ -7,11 +7,10 @@ import Optimizer2
 import MachineSize
 import AST
 
-
 changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
 changeOrder char oldState mvar = do
         let clist = charToConditionList char
-        randomAst <- randomOrderAst clist
+        randomAst <- randomOrderAst (vars char) clist
         let (newAst, newState) = runState (optimize randomAst) oldState
         let newSize = msize newAst
         modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
@@ -28,11 +27,31 @@ optimize' (op:ops) char = do
     optimize' ops ochar
 optimize' [] char = return char
 
+randomIndex :: [a] -> IO Int
+randomIndex l = randomRIO (0, length l - 1)
+
+randomElem :: [a] -> IO a
+randomElem l = do
+    ridx <- randomIndex l
+    return $ l !! ridx
+
 charToConditionList :: Character -> [([Condition], Term)] --no AND nor OR conditions, terms - only decisions
 charToConditionList = undefined
 
-randomOrderAst :: [([Condition], Term)] -> IO Character
-randomOrderAst = undefined
+randomOrderAst :: [String] -> [([Condition], Term)] -> IO Character
+randomOrderAst vars clist = mapM randomOrderRule vars clist where --clist to this rule's list
+    randomOrderRule vars clist stateNum = do
+        rterm <- randomOrderTerm
+        return (stateNum, rterm)
+
+    randomOrderTerm = do
+        (rv, rest) <- randomElemWithRest vars
+        let (arms, def) = armsDefFromClist rv clist
+        return $ TmCase (TmVar rv) arms def
+
+randomElemWithRest els = do
+    rel <- randomElem
+    return (rel, delete rel els)
 
 optimizations :: [(Character -> Tagger Character, String)]
 optimizations = optimizations1 ++ optimizations2
