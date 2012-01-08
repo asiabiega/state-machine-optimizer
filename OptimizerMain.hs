@@ -8,6 +8,9 @@ import Optimizer
 import FileUtils
 import MainCommon
 
+--Author: Aleksander Balicki
+--Binary for optimization, ./smopt -a does summary, cat machinefile | ./smopt 10, does optimization with 10 second time limit
+
 main :: IO ()
 main = do
     args <- getArgs

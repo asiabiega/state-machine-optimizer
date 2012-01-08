@@ -1,17 +1,22 @@
 module AST where
 
+-- Author: Aleksander Balicki
+-- This module has the definiton of the AST, pretty-printer, some functions walking over the AST
+
 import Data.List
 import Data.Function
 import Text.PrettyPrint
 import Control.Monad.State
 import qualified Data.Map as Map
 
--- Tagger here is needed for fast Condition equality checking,
--- profiler was showing that this is the function with the biggest runring time
 
-type TaggerState = (Int, Map.Map Condition Int)
+-- | State monad with 'TaggerState', 'Tagger' here is needed for fast 'Condition' equality checking, profiler was showing that this is the function with the biggest running time
 type Tagger a = State TaggerState a
 
+-- | The state of the tagger, current highest tag, and a map of conditions to tags
+type TaggerState = (Int, Map.Map Condition Int)
+
+-- | Starting 'Tagger' state
 tagStart :: TaggerState
 tagStart = (0, Map.empty)
 
@@ -29,12 +34,14 @@ data Condition = TmEquals Variable Integer EqTag
             | TmFalse
             deriving(Show, Ord)
 
+-- | Change an 'EqTag' of a 'Condition'
 changeEqTag :: Condition -> Int -> Condition
 changeEqTag (TmEquals a b _) t = TmEquals a b t
 changeEqTag (TmAnd cnds _) t = TmAnd cnds t
 changeEqTag (TmOr cnds _) t = TmOr cnds t
 changeEqTag a _ = error $ "changeEqTag " ++ show a
 
+-- | Check if there is already a tag for the condition, if not generate one
 cachedCondition :: Condition -> Tagger Condition
 cachedCondition cond = do
     (num, m) <- get
@@ -67,6 +74,7 @@ type Rule = ([StateNumber], Term)
 type Character = [Rule]
 type Env = [(String, Integer)]
 
+-- | Pretty printer using pretty library
 pp :: Character -> String
 pp = render . ppChar
 
@@ -110,6 +118,7 @@ vars chr = map fst (varsVals chr)
 
 type VarUniverse = (String, [Integer])
 
+-- | Takes out all possible variables with their possible values from the AST
 varsVals :: Character -> [VarUniverse]
 varsVals ch = map (foldl (\(_,ts) (b, t) -> (b,t:ts)) (error "empty group", [])) $ groupBy (on (==) fst) $ sort $ varsVals' ch where
     varsVals' :: Character -> [(String, Integer)]

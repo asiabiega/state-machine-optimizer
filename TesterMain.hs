@@ -9,6 +9,10 @@ import Optimizer
 import FileUtils
 import MainCommon
 
+-- Author: Aleksander Balicki
+-- A binary for randomized testing, it randomizes the file, the environment and the starting state,
+-- runs the optimizer and checks if the result is the same
+
 main :: IO ()
 main = do
     files <- listFiles "inputs"

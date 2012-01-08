@@ -1,5 +1,6 @@
 module FileUtils where
-
+-- Author: Aleksander Balicki
+-- Some functions that were useful for test file management
 import System.FilePath.Posix
 import System.Directory
 import Data.List
