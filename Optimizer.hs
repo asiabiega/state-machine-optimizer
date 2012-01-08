@@ -13,10 +13,7 @@ optimize :: Character -> Tagger Character
 optimize = optimize' (map fst optimizations)
 
 optimize' :: [Character -> Tagger Character] -> Character -> Tagger Character
-optimize' (op:ops) char = do
-    ochar <- op char
-    optimize' ops ochar
-optimize' [] char = return char
+optimize' ops char = foldM (\ char op -> op char) char ops
 
 charToConditionList :: Character -> [(StateNumber, [([(Bool, Condition)], Term)])] --no AND nor OR conditions, terms - only decisions
 charToConditionList = undefined
@@ -33,7 +30,7 @@ changeOrder char oldState mvar = do
         changeOrder char newState mvar
 
 randomOrderAst :: [VarUniverse] -> [(StateNumber, [([(Bool, Condition)], Term)])] -> IO Character
-randomOrderAst vars clists = mapM (randomOrderRule vars) clists where --clist to this rule's list
+randomOrderAst vars = mapM (randomOrderRule vars) where --clist to this rule's list
     randomOrderRule :: [VarUniverse] -> (StateNumber, [([(Bool, Condition)], Term)]) -> IO Rule
     randomOrderRule vars (stateNum, clist) = do
         rterm <- randomOrderTerm vars clist
