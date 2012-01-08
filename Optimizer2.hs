@@ -58,7 +58,7 @@ sameArgBranchRemoval = map (\(st, t)-> (st, saBranchRemoval t))
 
 saBranchRemoval (TmIf cond tt elifs tf) = let l = rmDuplicated $ (cond, tt):elifs in
     let tt_ = saBranchRemoval tt in
-    let elifs_ = map (\(x,y) -> (x, saBranchRemoval y)) (tail l) in
+    let elifs_ = map (\(x,y) -> (x, saBranchRemoval y)) (tail l) in --FIXME will fail on if A then T elseif A then T else T
     let tf_ = (saBranchRemoval tf) in
     TmIf cond tt_ elifs_ tf_
 
