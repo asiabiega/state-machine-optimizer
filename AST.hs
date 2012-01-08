@@ -35,11 +35,11 @@ changeEqTag a _ = error $ "changeEqTag " ++ show a
 
 cachedCondition :: Condition -> Tagger Condition
 cachedCondition cond = do
-    (num, map) <- get
-    case Map.lookup cond map of
+    (num, m) <- get
+    case Map.lookup cond m of
         Just i -> return $ changeEqTag cond i
         Nothing -> do
-            put (num+1, Map.insert cond num map)
+            put (num+1, Map.insert cond num m)
             return $ changeEqTag cond num
 
 instance Eq Condition where

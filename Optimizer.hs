@@ -9,10 +9,10 @@ import AST
 
 
 changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
-changeOrder char state mvar = do
+changeOrder char oldState mvar = do
         let clist = charToConditionList char
         randomAst <- randomOrderAst clist
-        let (newAst, newState) = runState (optimize randomAst) state
+        let (newAst, newState) = runState (optimize randomAst) oldState
         let newSize = msize newAst
         modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
             then return (newSize, newAst)
