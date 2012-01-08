@@ -15,15 +15,12 @@ optimizations2 = [(return . notAccessibleBranchRemoval, "not-accesible-branch-re
 
 termToConditionList :: Term -> [(Bool, Condition)] -> [([(Bool, Condition)], Term)]
 termToConditionList (TmIf cond tt elifs tf) cnd = 
-    let cond_tt = termToConditionList tt cnd in
-    --(condition, list of condition-term pairs for t)
-    let cond_elifs = map (\(c, t) -> (c, termToConditionList t cnd)) elifs in
-    let cond_tf = termToConditionList tf cnd in
-    --common list of(cond, condition-term pairs)
-    let full_cond_list = (cond, cond_tt) : cond_elifs ++ [(TmTrue, cond_tf)] in
-    -- map current condition (in split version) to list of needed conditions
-    let full_cond_list_with_current = map (\(cond, tt) -> (splitCond cond, [ ( x ++ q,t) | x<-(splitCond cond), (q,t) <- tt ])) full_cond_list in
-    let (negs, almost) = foldl (\(neg, curr) (c,t)-> (neg ++ (negateSplitCond c), [ ( x ++ q,tr) | x<-neg, (q,tr) <- t ] :curr)) ([],[]) full_cond_list_with_current in
+    let cond_tt = termToConditionList tt cnd :: [([(Bool, Condition)], Term)] in
+    let cond_elifs = map (\(c, t) -> (c, termToConditionList t cnd)) elifs :: [(Condition, [([(Bool, Condition)], Term)])] in
+    let cond_tf = (termToConditionList tf cnd) :: [([(Bool, Condition)], Term)] in
+    let full_cond_list = (cond, cond_tt) : cond_elifs ++ [(TmTrue, cond_tf)] :: [(Condition, [([(Bool, Condition)], Term)])] in
+    let full_cond_list_with_current = map (\(c, tt) -> (splitCond c, [ ( x ++ q,t) | x<-(splitCond cond), (q,t) <- tt ])) full_cond_list :: [([[(Bool, Condition)]], [([(Bool, Condition)], Term)])] in
+    let (negs, almost) = foldl (\(neg, curr) (c,t)-> (neg ++ (negateSplitCond c), [ ( x ++ q,tr) | x<-neg, (q,tr) <- t ] :curr)) ([],[]) full_cond_list_with_current :: ( [[(Bool, Condition)]], [[([(Bool, Condition)], Term)]]) in
     concat almost
 
 termToConditionList (TmCase (TmVar x) arms def) cnd = 
@@ -62,7 +59,8 @@ naBranchRemoval (TmIf cond tt elifs tf) assumptions =
                     (c, t):xs -> naBranchRemoval (TmIf c t xs tf) assumptions
             else
                 let tt_ = (naBranchRemoval tt (cond:assumptions)) in
-                let elifs_ = map (\(x,y) -> (x, naBranchRemoval y (x:assumptions))) elifs in
+                let clean_elifs = filter (\(x,y) -> x /= TmFalse) elifs in
+                let elifs_ = map (\(x,y) -> (x, naBranchRemoval y (x:assumptions))) clean_elifs in
                 let tf_ = (naBranchRemoval tf assumptions) in
                 TmIf cond tt_ elifs_ tf_
 
