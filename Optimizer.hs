@@ -2,16 +2,26 @@ module Optimizer where
 import Control.Monad.State
 import Control.Concurrent.MVar
 import Data.List
+import System.Random
 
 import Optimizer2
 import MachineSize
 import AST
 
 
+optimize :: Character -> Tagger Character
+optimize = optimize' (map fst optimizations)
+
+optimize' :: [Character -> Tagger Character] -> Character -> Tagger Character
+optimize' ops char = foldM (\ char op -> op char) char ops
+
+charToConditionList :: Character -> [(StateNumber, [([(Bool, Condition)], Term)])] --no AND nor OR conditions, terms - only decisions
+charToConditionList = undefined
+
 changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
 changeOrder char oldState mvar = do
         let clist = charToConditionList char
-        randomAst <- randomOrderAst clist
+        randomAst <- randomOrderAst (varsVals char) clist
         let (newAst, newState) = runState (optimize randomAst) oldState
         let newSize = msize newAst
         modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
@@ -19,20 +29,29 @@ changeOrder char oldState mvar = do
             else return (oldSize, oldAst)
         changeOrder char newState mvar
 
-optimize :: Character -> Tagger Character
-optimize = optimize' (map fst optimizations)
+randomOrderAst :: [VarUniverse] -> [(StateNumber, [([(Bool, Condition)], Term)])] -> IO Character
+randomOrderAst vars = mapM (randomOrderRule vars) where --clist to this rule's list
+    randomOrderRule :: [VarUniverse] -> (StateNumber, [([(Bool, Condition)], Term)]) -> IO Rule
+    randomOrderRule vars (stateNum, clist) = do
+        rterm <- randomOrderTerm vars clist
+        return ([stateNum], rterm)
 
-optimize' :: [Character -> Tagger Character] -> Character -> Tagger Character
-optimize' (op:ops) char = do
-    ochar <- op char
-    optimize' ops ochar
-optimize' [] char = return char
+    randomOrderTerm :: [VarUniverse] -> [([(Bool, Condition)], Term)] -> IO Term
+    randomOrderTerm [] [([], term)] = return term
+    randomOrderTerm (v:vars) clist = do
+        ((rvar,rvals), rest) <- randomElemWithRest (v:vars)
+        (arms, def) <- armsDefFromClist rvar rvals rest clist
+        return $ TmCase (TmVar rvar) arms def
+    randomOrderTerm a b = error $ "randomOrderTerm " ++ show a ++ " " ++ show b
 
-charToConditionList :: Character -> [([Condition], Term)] --no AND nor OR conditions, terms - only decisions
-charToConditionList = undefined
+    armsDefFromClist var vals rest clist = do
+       (arms, clistRest) <- armsFromClist var vals rest clist
+       def <- randomOrderTerm rest clistRest
+       return (arms, def)
 
-randomOrderAst :: [([Condition], Term)] -> IO Character
-randomOrderAst = undefined
+    armsFromClist var vals rest clist = undefined --mapM (\val -> armFromClist var val rest clist) vals
+
+    armFromClist var val rest clist = undefined
 
 optimizations :: [(Character -> Tagger Character, String)]
 optimizations = optimizations1 ++ optimizations2
@@ -204,3 +223,17 @@ ifCaseInterchange = mapM ifCaseInterchangeRule where
 
     simplifyArms ((ns, t):arms) = map (\i -> ([i], t)) ns ++ simplifyArms arms
     simplifyArms [] = []
+
+
+randomIndex :: [a] -> IO Int
+randomIndex l = randomRIO (0, length l - 1)
+
+randomElem :: [a] -> IO a
+randomElem l = do
+    ridx <- randomIndex l
+    return $ l !! ridx
+
+randomElemWithRest :: Eq a => [a] -> IO (a, [a])
+randomElemWithRest els = do
+    rel <- randomElem els
+    return (rel, delete rel els)

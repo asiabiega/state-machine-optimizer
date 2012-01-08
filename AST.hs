@@ -6,6 +6,8 @@ import Text.PrettyPrint
 import Control.Monad.State
 import qualified Data.Map as Map
 
+-- Tagger here is needed for fast Condition equality checking,
+-- profiler was showing that this is the function with the biggest runring time
 
 type TaggerState = (Int, Map.Map Condition Int)
 type Tagger a = State TaggerState a
@@ -106,7 +108,9 @@ startingStates = concatMap fst
 vars :: Character -> [String]
 vars chr = map fst (varsVals chr)
 
-varsVals :: Character -> [(String, [Integer])]
+type VarUniverse = (String, [Integer])
+
+varsVals :: Character -> [VarUniverse]
 varsVals ch = map (foldl (\(_,ts) (b, t) -> (b,t:ts)) (error "empty group", [])) $ groupBy (on (==) fst) $ sort $ varsVals' ch where
     varsVals' :: Character -> [(String, Integer)]
     varsVals' rules = vunion $ map varsValsRule rules

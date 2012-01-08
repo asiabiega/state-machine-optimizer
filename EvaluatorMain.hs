@@ -14,8 +14,8 @@ main = do
     let (ast, state) = runState (parse . lex $ cont) tagStart
     args <- getArgs
     case args of
-        (_:_:_) -> error "too many args supplied, use one Integer to set the machine state"
-        [] -> error "no args supplied, use one Integer to set the machine state"
+        (_:_:_) -> error "too many args supplied, use one Integer to set the machine state and pipe the machine to stdin"
+        [] -> error "no args supplied, use one Integer to set the machine state and pipe the machine to stdin"
         [n] -> do
             renv <- randomEnv ast
             putStrLn $ "env: " ++ show renv

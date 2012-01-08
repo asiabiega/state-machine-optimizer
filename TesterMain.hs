@@ -21,7 +21,7 @@ main = do
         let randomOptimizations =  map fst randomOptimizationsWithNames
         let randomOptimizationNames = map snd randomOptimizationsWithNames
 
-        ((oldAst, _), (newAst, _)) <- oldNewAstWithSize (optimize' randomOptimizations) cont
+        ((oldAst, _), (newAst, _)) <- oldNewAstWithSize 10 (optimize' randomOptimizations) cont
 
         renv <- randomEnv oldAst
 
@@ -39,10 +39,3 @@ main = do
                 putStrLn $ "difference:" ++ show (ot, oc) ++ " " ++ show (nt, nc)
             else putStr "."
 
-randomIndex :: [a] -> IO Int
-randomIndex l = randomRIO (0, length l - 1)
-
-randomElem :: [a] -> IO a
-randomElem l = do
-    ridx <- randomIndex l
-    return $ l !! ridx

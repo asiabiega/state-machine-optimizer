@@ -1,19 +1,21 @@
 module MainCommon where
 import Prelude hiding (lex)
 import Control.Monad.State
+import System.Timeout
 
 import MachineSize
 import Lexer
 import Parser
 import AST
 
-oldNewAstWithSize :: (Character -> Tagger Character) -> String -> IO ((Character, Integer), (Character, Integer))
-oldNewAstWithSize opt cont = do
+oldNewAstWithSize :: Int ->  (Character -> Tagger Character) -> String -> IO ((Character, Integer), (Character, Integer))
+oldNewAstWithSize time opt cont = do
     let (oldAst, state) = runState (parse . lex $ cont) tagStart
     let oldSize = msize oldAst
-    let (newAst, _) = runState (opt $ oldAst) state
-    let newSize = msize newAst
-    return ((oldAst, oldSize), (newAst, newSize))
+    ast <- timeout (time*1000000) (return $ runState (opt $ oldAst) state)
+    case ast of
+        Just (newAst, _) -> return ((oldAst, oldSize), (newAst, msize newAst))
+        Nothing -> return ((oldAst, oldSize), (oldAst, oldSize))
 
 oldAstWithSize :: String -> (Character, Integer)
 oldAstWithSize cont = let (oldAst, _) = runState (parse . lex $ cont) tagStart in
