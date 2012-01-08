@@ -59,7 +59,8 @@ naBranchRemoval (TmIf cond tt elifs tf) assumptions =
                     (c, t):xs -> naBranchRemoval (TmIf c t xs tf) assumptions
             else
                 let tt_ = (naBranchRemoval tt (cond:assumptions)) in
-                let elifs_ = map (\(x,y) -> (x, naBranchRemoval y (x:assumptions))) elifs in
+                let clean_elifs = filter (\(x,y) -> x /= TmFalse) elifs in
+                let elifs_ = map (\(x,y) -> (x, naBranchRemoval y (x:assumptions))) clean_elifs in
                 let tf_ = (naBranchRemoval tf assumptions) in
                 TmIf cond tt_ elifs_ tf_
 
