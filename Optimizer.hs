@@ -54,7 +54,7 @@ randomOrderAst vars = mapM (randomOrderRule vars) where --clist to this rule's l
     armFromClist var val rest clist = undefined
 
 optimizations :: [(Character -> Tagger Character, String)]
-optimizations = optimizations1 ++ optimizations2
+optimizations = optimizations1 ++ optimizations2 ++ [(return . notAccessibleBranchRemoval, "not-accessible-branch-removal")]
 
 optimizations1 :: [(Character -> Tagger Character, String)]
 optimizations1 = [(contradictoryAndRemoval, "contradictory-and-removal")

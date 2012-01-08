@@ -94,7 +94,7 @@ ppCond :: Condition -> Doc
 ppCond (TmEquals var i _) = parens $ text "EQUALS" <+> ppVar var <+> integer i
 ppCond (TmAnd conds _) = parens $ text "AND" <+> vcat (map ppCond conds)
 ppCond (TmOr conds _)  = parens $ text "OR"  <+> vcat (map ppCond conds)
-ppCond a = error $ "ppCond wrong optimization order, remove TmTrue and TmFalse " ++ show a
+ppCond a = text $ "ppCond wrong optimization order, " ++ show a
 
 ppArm :: (ValueSet, Term) -> Doc
 ppArm (vs, t) = parens $ text "ARM" <+> parens (vcat $ map integer vs) $$ ppTerm t
