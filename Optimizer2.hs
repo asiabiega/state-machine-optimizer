@@ -9,6 +9,37 @@ optimizations2 :: [(Character -> Tagger Character, String)]
 optimizations2 = [(return . notAccessibleBranchRemoval, "not-accesible-branch-removal")
                  ,(return . sameArgBranchRemoval, "same-arg-branch-removal")
                  ,(trivialAndRemoval, "trivial-and-removal")]
+
+-------------------------------------------------------------------------------------------------------------
+-- Character-to-condition-for-each-decision helper function
+
+termToConditionList :: Term -> [(Bool, Condition)] -> [([(Bool, Condition)], Term)]
+termToConditionList (TmIf cond tt elifs tf) cnd = 
+    let cond_tt = termToConditionList tt cnd in
+    --(condition, list of condition-term pairs for t)
+    let cond_elifs = map (\(c, t) -> (c, termToConditionList t cnd)) elifs in
+    let cond_tf = termToConditionList tf cnd in
+    --common list of(cond, condition-term pairs)
+    let full_cond_list = (cond, cond_tt) : cond_elifs ++ [(TmTrue, cond_tf)] in
+    -- map current condition (in split version) to list of needed conditions
+    let full_cond_list_with_current = map (\(cond, tt) -> (splitCond cond, [ ( x ++ q,t) | x<-(splitCond cond), (q,t) <- tt ])) full_cond_list in
+    let (negs, almost) = foldl (\(neg, curr) (c,t)-> (neg ++ (negateSplitCond c), [ ( x ++ q,tr) | x<-neg, (q,tr) <- t ] :curr)) ([],[]) full_cond_list_with_current in
+    concat almost
+
+termToConditionList (TmCase (TmVar x) arms def) cnd = 
+    let cond_def = termToConditionList def cnd in
+    let cond_arms = map (\(vals, t) -> (vals, termToConditionList t cnd)) arms in
+    let cond_arms_ = concatMap (\(vals, cl) -> [ ( (True, TmEquals (TmVar x) p):q, t) | p <- vals, (q,t) <- cl ]) cond_arms in
+    cond_def ++ cond_arms_
+
+termToConditionList (TmDecision s u) cond = [(cond, TmDecision s u)]
+
+--TODO: split cond
+splitCond c = [[(True,c)]]
+
+--TODO: negate
+negateSplitCond c = undefined
+
 -------------------------------------------------------------------------------------------------------------
 
 --TODO? : negacja warunków po przejściu do następnego brancha
