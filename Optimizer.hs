@@ -1,5 +1,4 @@
 module Optimizer where
-import Control.Arrow
 import Control.Monad.State
 import Control.Concurrent.MVar
 import Data.List
@@ -8,12 +7,26 @@ import Optimizer2
 import MachineSize
 import AST
 
-changeOrder :: Character -> MVar (Integer, Character) -> IO ()
-changeOrder char mvar = forever $ do
+
+changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
+changeOrder char oldState mvar = do
         let clist = charToConditionList char
-        newAst <- fmap fastOptimizations (randomOrderAst clist)
+        randomAst <- randomOrderAst clist
+        let (newAst, newState) = runState (optimize randomAst) oldState
         let newSize = msize newAst
-        modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize then return (newSize, newAst) else return (oldSize, oldAst)
+        modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
+            then return (newSize, newAst)
+            else return (oldSize, oldAst)
+        changeOrder char newState mvar
+
+optimize :: Character -> Tagger Character
+optimize = optimize' (map fst optimizations)
+
+optimize' :: [Character -> Tagger Character] -> Character -> Tagger Character
+optimize' (op:ops) char = do
+    ochar <- op char
+    optimize' ops ochar
+optimize' [] char = return char
 
 charToConditionList :: Character -> [([Condition], Term)] --no AND nor OR conditions, terms - only decisions
 charToConditionList = undefined
@@ -21,14 +34,13 @@ charToConditionList = undefined
 randomOrderAst :: [([Condition], Term)] -> IO Character
 randomOrderAst = undefined
 
-fastOptimizations :: Character -> Character
-fastOptimizations = fixOptimizations $ foldl' (.) id (map fst $ optimizations ++ optimizations2)
+optimizations :: [(Character -> Tagger Character, String)]
+optimizations = optimizations1 ++ optimizations2
 
-optimizations :: [(Character -> Character, String)]
-optimizations = [(contradictoryAndRemoval, "contradictory-and-removal")
-                ,(stateNumberWildcarder, "state-number-wildcarder")
-                ,(ifCaseInterchange, "if-case-interchange")]
-
+optimizations1 :: [(Character -> Tagger Character, String)]
+optimizations1 = [(contradictoryAndRemoval, "contradictory-and-removal")
+                 ,(return . stateNumberWildcarder, "state-number-wildcarder")
+                 ,(ifCaseInterchange, "if-case-interchange")]
 
 -- | Applies given optimization, until a fixpoint is reached
 fixOptimizations :: (Character -> Character) -> Character -> Character
@@ -37,30 +49,46 @@ fixOptimizations opt char = let ochar = opt char in
         then ochar
         else fixOptimizations opt ochar
 
+
 -- | Contradictory and condition removal, it changes the whole condition to TmFalse, when TmAnd conditions are contradictory
-contradictoryAndRemoval :: Character -> Character
-contradictoryAndRemoval = map contradictoryAndRemovalRule where
-    contradictoryAndRemovalRule :: Rule -> Rule
-    contradictoryAndRemovalRule (stnums, t) = (stnums, contradictoryAndRemovalTerm t)
+contradictoryAndRemoval :: Character -> Tagger Character
+contradictoryAndRemoval = mapM contradictoryAndRemovalRule where
+    contradictoryAndRemovalRule :: Rule -> Tagger Rule
+    contradictoryAndRemovalRule (stnums, t) = do { mt <- contradictoryAndRemovalTerm t; return (stnums, mt)}
 
-    contradictoryAndRemovalTerm :: Term -> Term
-    contradictoryAndRemovalTerm (TmIf cnd t1 elseifs t2) = TmIf (contradictoryAndRemovalCond cnd) (contradictoryAndRemovalTerm t1)
-        (map (contradictoryAndRemovalCond *** contradictoryAndRemovalTerm) elseifs) (contradictoryAndRemovalTerm t2)
-    contradictoryAndRemovalTerm (TmCase var arms t) = TmCase var (map (second contradictoryAndRemovalTerm) arms) (contradictoryAndRemovalTerm t)
-    contradictoryAndRemovalTerm a@(TmDecision _ _) = a
+    contradictoryAndRemovalTerm :: Term -> Tagger Term
+    contradictoryAndRemovalTerm (TmIf cnd t1 elseifs t2) = do
+        mcnd <- contradictoryAndRemovalCond cnd
+        mt1 <- contradictoryAndRemovalTerm t1
+        mtei <- mapM (\(eic, eit) -> do { meic <- contradictoryAndRemovalCond eic;
+                                          meit <- contradictoryAndRemovalTerm eit;
+                                          return (meic, meit)}) elseifs
+        mt2 <- contradictoryAndRemovalTerm t2
+        return $ TmIf mcnd mt1 mtei mt2
 
-    contradictoryAndRemovalCond :: Condition -> Condition
-    contradictoryAndRemovalCond (TmAnd cnds) = let newCnds = map contradictoryAndRemovalCond cnds in
-        if evalState (cleanAnds newCnds) [] then TmAnd newCnds else TmFalse
-    contradictoryAndRemovalCond (TmOr cnds) = TmOr $ map contradictoryAndRemovalCond cnds
-    contradictoryAndRemovalCond a = a
+    contradictoryAndRemovalTerm (TmCase var arms t) = do
+        marms <- mapM (\(vs, at) -> do { mat <- contradictoryAndRemovalTerm at; return (vs, mat)}) arms
+        mt <- contradictoryAndRemovalTerm t
+        return $ TmCase var marms mt
+    contradictoryAndRemovalTerm a@(TmDecision _ _) = return a
+
+    contradictoryAndRemovalCond :: Condition -> Tagger Condition
+    contradictoryAndRemovalCond (TmAnd cnds _) = do
+        newCnds <- mapM contradictoryAndRemovalCond cnds
+        if evalState (cleanAnds newCnds) []
+            then cachedCondition $ TmAnd newCnds 0
+            else return TmFalse
+    contradictoryAndRemovalCond (TmOr cnds _) = do
+        newCnds <- mapM contradictoryAndRemovalCond cnds
+        cachedCondition $ TmOr newCnds 0
+    contradictoryAndRemovalCond a = return a
 
     cleanAnds :: [Condition] -> State [(Variable, Integer)] Bool
     cleanAnds (TmTrue:cnds) = cleanAnds cnds
     cleanAnds (TmFalse:_) = return False
-    cleanAnds (TmAnd cnds1:cnds2) = cleanAnds $ cnds1 ++ cnds2
-    cleanAnds (TmOr _:cnds2) = cleanAnds cnds2 --TODO think what can we do about ORs
-    cleanAnds (TmEquals v i:cnds) = do
+    cleanAnds (TmAnd cnds1 _:cnds2) = cleanAnds $ cnds1 ++ cnds2
+    cleanAnds (TmOr _ _:cnds2) = cleanAnds cnds2 --TODO think what can we do about ORs
+    cleanAnds (TmEquals v i _:cnds) = do
         s <- get
         if contradictsSet s (v,i)
             then return False
@@ -71,6 +99,7 @@ contradictoryAndRemoval = map contradictoryAndRemovalRule where
     contradictsSet set (v,i) = case lookup v set of
         Nothing -> False
         Just i2 -> i2 /= i
+
 
 -- | State number wildcarder, it changes an explicit state in a TmDecision statement to a wildcard if able
 stateNumberWildcarder :: Character -> Character
@@ -97,58 +126,81 @@ stateNumberWildcarder = map stateNumberWildcarderRule where
     stateNumberWildcarderTerm a@(TmDecision TmCurrent _) = return a
     stateNumberWildcarderTerm a@(TmDecision (TmState i) u) = gets $ \i2 -> if i == i2 then TmDecision TmCurrent u else a
 
-ifCaseInterchange :: Character -> Character
-ifCaseInterchange = map ifCaseInterchangeRule where
-    ifCaseInterchangeRule (stateNums, term) = (stateNums, ifCaseInterchangeTerm term)
 
-    ifCaseInterchangeTerm tif@(TmIf cnd _ elseifs _) = case caseFromIf tif of
-        tcase@(TmCase _ arms _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
-            then tcase
-            else tif
-        _ -> tif
+ifCaseInterchange :: Character -> Tagger Character
+ifCaseInterchange = mapM ifCaseInterchangeRule where
+    ifCaseInterchangeRule :: Rule -> Tagger Rule
+    ifCaseInterchangeRule (stateNums, term) = do { mt <- ifCaseInterchangeTerm term; return (stateNums, mt)}
 
-    ifCaseInterchangeTerm tcase@(TmCase _ arms _) = case ifFromCase tcase of
-        tif@(TmIf cnd _ elseifs _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
-            then tcase
-            else tif
-        _ -> tcase
+    ifCaseInterchangeTerm :: Term -> Tagger Term
+    ifCaseInterchangeTerm tif@(TmIf cnd _ elseifs _) = do
+        mtcase <- caseFromIf tif
+        return $ case mtcase of
+            tcase@(TmCase _ arms _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+                then tcase
+                else tif
+            _ -> tif
 
-    ifCaseInterchangeTerm a = a
+    ifCaseInterchangeTerm tcase@(TmCase _ arms _) = do
+        mtif <- ifFromCase tcase
+        return $ case mtif of
+            tif@(TmIf cnd _ elseifs _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+                then tcase
+                else tif
+            _ -> tcase
 
-    caseFromIf tif@(TmIf cnd t1 elseifs t2) = maybe tif
-        (\v -> TmCase (TmVar v) (armsFromElseifs ((cnd,t1):elseifs)) t2) (cleanIf tif)
+    ifCaseInterchangeTerm a = return a
 
-    armsFromElseifs ((TmEquals _ val, term):elseifs) = ([val], term) : armsFromElseifs elseifs
-    armsFromElseifs ((TmAnd cnds, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
-    armsFromElseifs ((TmOr cnds, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
+    caseFromIf :: Term -> Tagger Term
+    caseFromIf tif@(TmIf cnd t1 elseifs t2) = case cleanIf tif of
+        Nothing -> return tif
+        Just v -> let marms = armsFromElseifs ((cnd,t1):elseifs) in return $ TmCase (TmVar v) marms t2
+    caseFromIf a = error $ "caseFromIf " ++ show a
+
+    armsFromElseifs :: [(Condition, Term)] -> [(ValueSet, Term)]
+    armsFromElseifs ((TmEquals _ val _, term):elseifs) = ([val], term) : armsFromElseifs elseifs
+    armsFromElseifs ((TmAnd cnds _, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
+    armsFromElseifs ((TmOr cnds _, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
     armsFromElseifs [] = []
+    armsFromElseifs a = error $ "armsFromElseIfs " ++ show a
     --TODO it has to have false ands removal immediately before
     --TODO maybe split ands to those, who can be transformed
 
     valueSetFromCnds :: [Condition] -> [Integer]
-    valueSetFromCnds (TmEquals _ v:cs) = v : valueSetFromCnds cs
+    valueSetFromCnds (TmEquals _ v _:cs) = v : valueSetFromCnds cs
     valueSetFromCnds (TmFalse:cs) = valueSetFromCnds cs
     valueSetFromCnds (TmTrue:cs) = valueSetFromCnds cs
-    valueSetFromCnds (TmOr cnds:cs) = valueSetFromCnds (cnds ++ cs)
-    valueSetFromCnds (TmAnd cnds:cs) = valueSetFromCnds (cnds ++ cs)
+    valueSetFromCnds (TmOr cnds _:cs) = valueSetFromCnds (cnds ++ cs)
+    valueSetFromCnds (TmAnd cnds _:cs) = valueSetFromCnds (cnds ++ cs)
     valueSetFromCnds [] = []
 
     -- | has only one variable in conditions
     cleanIf :: Term -> Maybe String
-    cleanIf (TmIf cnd _ elseifs t2) = case vunion $ varsCnd cnd : map (varsCnd . fst) elseifs of
+    cleanIf (TmIf cnd _ elseifs _) = case vunion $ varsCnd cnd : map (varsCnd . fst) elseifs of
         [v] -> Just v
         _ -> Nothing
+    cleanIf a = error $ "cleanIf " ++ show a
 
+    ifFromCase :: Term -> Tagger Term
     ifFromCase (TmCase var arms def) = case simplifyArms arms of
-        [] -> def
-        (vals, term):as -> TmIf (orFromVals var vals) term (elseifsFromArms var as) def
+        [] -> return def
+        (vals, term):as -> do
+            mor <- orFromVals var vals
+            mei <- elseifsFromArms var as
+            return $ TmIf mor term mei def
+    ifFromCase a = error $ "ifFromCase " ++ show a
 
-    orFromVals :: Variable -> [Integer] -> Condition
-    orFromVals var vs = TmOr (map (\v -> TmEquals var v) vs)
+    orFromVals :: Variable -> [Integer] -> Tagger Condition
+    orFromVals var vs = do
+        mcnds <- mapM (\v -> cachedCondition $ TmEquals var v 0) vs
+        cachedCondition $ TmOr mcnds 0
 
-    elseifsFromArms var ((vals, term):as) = (orFromVals var vals, term) : elseifsFromArms var as
-    elseifsFromArms _ [] = []
+    elseifsFromArms :: Variable -> [(ValueSet, Term)] -> Tagger [(Condition, Term)]
+    elseifsFromArms var ((vals, term):as) = do
+        mh <- orFromVals var vals
+        mt <- elseifsFromArms var as
+        return $ (mh, term) : mt
+    elseifsFromArms _ [] = return []
 
-    simplifyArms (([n], t):arms) = ([n], t) : simplifyArms arms
-    simplifyArms ((n:ns, t):arms) = map (\i -> ([i], t)) (n:ns) ++ simplifyArms arms
+    simplifyArms ((ns, t):arms) = map (\i -> ([i], t)) ns ++ simplifyArms arms
     simplifyArms [] = []

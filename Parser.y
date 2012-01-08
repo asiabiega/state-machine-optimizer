@@ -3,13 +3,18 @@
 module Parser where
 
 import Lexer
+import Control.Monad.State
+import qualified Data.Map as Map
 import AST
+
 }
 
 %name parse character
 
 %tokentype { Token }
 %error     { parseError }
+%monad { State (Int, Map.Map Condition Int) }
+
 
 %token
 	And             { (_,TkAnd)	}
@@ -61,9 +66,9 @@ arm :: { (ValueSet, Term) }
 arm:		LParen Arm valueset statement RParen	 { ($3, $4) }
 
 condition :: { Condition }
-condition:	LParen Equals variable Int RParen	 { TmEquals $3 $4 }
-	 	| LParen And conditions RParen		 { TmAnd $3 }
-		| LParen Or conditions RParen		 { TmOr $3 }
+condition:	LParen Equals variable Int RParen	 {% cachedCondition (TmEquals $3 $4 0) }
+	 	| LParen And conditions RParen		 {% cachedCondition (TmAnd $3 0) }
+		| LParen Or conditions RParen		 {% cachedCondition (TmOr $3 0) }
 
 conditions ::{ [Condition] }
 conditions:	condition conditions			 { $1 : $2 }

@@ -1,11 +1,8 @@
 module Evaluator where
 import Prelude hiding (lex)
 import System.Random
-import System.Environment
 
 import AST
-import Parser
-import Lexer
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -46,19 +43,19 @@ chooseCase val ((vs, t):xs) def = if elem val vs then t
 -------------------------------------------------------------------------------------------------------------
 evalCondition :: Condition -> Env -> Cost -> (Condition, Cost)
 
-evalCondition (TmEquals (TmVar x) val) env cost = case lookup x env of
+evalCondition (TmEquals (TmVar x) val _) env cost = case lookup x env of
     Just v -> if v == val then (TmTrue, cost+6.5) else (TmFalse, cost+6.5)
     Nothing -> (TmFalse, cost+6.5)
 
-evalCondition (TmAnd []) env cost = (TmTrue, cost)
-evalCondition (TmAnd (x:xs)) env cost = let (cond, c) = evalCondition x env cost in if cond == TmTrue 
-                                then evalCondition (TmAnd xs) env c
+evalCondition (TmAnd [] _) env cost = (TmTrue, cost)
+evalCondition (TmAnd (x:xs) _) env cost = let (cond, c) = evalCondition x env cost in if cond == TmTrue 
+                                then evalCondition (TmAnd xs 0) env c
                                 else (TmFalse, c)
 
-evalCondition (TmOr []) env cost = (TmFalse, cost)
-evalCondition (TmOr (x:xs)) env cost = let (cond, c) = evalCondition x env cost in if cond == TmTrue 
+evalCondition (TmOr [] _) env cost = (TmFalse, cost)
+evalCondition (TmOr (x:xs) _) env cost = let (cond, c) = evalCondition x env cost in if cond == TmTrue 
                                 then (TmTrue, c)
-                                else evalCondition (TmOr xs) env c
+                                else evalCondition (TmOr xs 0) env c
 
 evalCondition TmTrue _ cost = (TmTrue, cost)
 evalCondition TmFalse _ cost = (TmFalse, cost)

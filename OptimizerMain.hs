@@ -1,26 +1,12 @@
-import Prelude hiding (lex)
-import System.Timeout
 import System.Environment
 import System.IO
 import Control.Concurrent.MVar
+import Control.Monad.State
 
-import Lexer
-import Parser
 import AST
-import MachineSize
 import Optimizer
-import Optimizer2
 import FileUtils
-
-optimize :: Character -> Character
-optimize = (sameArgBranchRemoval . notAccessibleBranchRemoval . stateNumberWildcarder . contradictoryAndRemoval . ifCaseInterchange . trivialAndRemoval)
-
-sizePairContent :: String -> IO (Integer, Integer)
-sizePairContent cont = do
-    let oldAst = parse . lex $ cont
-    let oldSize = msize oldAst
-    ast <- return . optimize $ oldAst
-    return (oldSize, msize ast)
+import MainCommon
 
 main :: IO ()
 main = do
@@ -29,27 +15,26 @@ main = do
         "-a" -> do
             files <- listFiles "inputs/"
             contentlist <- mapM readFile files
-            sizelist <- mapM sizePairContent contentlist
-            let (oldSizeSum, newSizeSum) = foldl (\(x,y) (x2, y2) -> (x+x2, y+y2)) (0,0) sizelist
+
+            astlist <- mapM (oldNewAstWithSize optimize) contentlist
+            let (oldSizeSum, newSizeSum) = foldl (\(x,y) ((_,x2),(_,y2)) -> (x+x2, y+y2)) (0,0) astlist
+
             putStrLn $ "old size sum: " ++ show oldSizeSum
             putStrLn $ "new size sum: " ++ show newSizeSum
             putStrLn $ "sum delta: " ++ show (oldSizeSum - newSizeSum) ++ " (" ++
                  show (100.0 - (fromIntegral newSizeSum / fromIntegral oldSizeSum * 100.0) :: Double) ++ "% reduction)"
 
         _ -> do
-            let time = read arg
+--            let time = read arg
             cont <- getContents
-            let oldAst = parse . lex $ cont
-            bestSolution <- newMVar (msize oldAst, oldAst) --deepseq
-            ast <- timeout (time*1000000) (return . optimize $ oldAst)
-            case ast of
-                Nothing -> hPutStrLn stderr "timed out"
-                Just newAst -> do
-                    let oldSize = msize oldAst
-                    let newSize = msize newAst
-                    putStrLn $ pp newAst
-                    putStrLn $ "old size: " ++ show oldSize --(takeMVar bestSolution)
-                    putStrLn $ "new size: " ++ show newSize
-                    putStrLn $ "delta:" ++ show (oldSize - newSize) ++ " (" ++
-                        show (100.0 - (fromIntegral newSize / fromIntegral oldSize * 100.0) :: Double) ++ "% reduction)"
+            ((_, oldSize), (newAst, newSize)) <- oldNewAstWithSize optimize cont
+--            bestSolution <- newMVar (msize oldAst, oldAst)
+--            ast <- timeout (time*1000000) (return $ fst $ runState (optimize $ oldAst) state)
+--            case ast of
+--                Nothing -> hPutStrLn stderr "timed out"
+            putStrLn $ pp newAst
+            putStrLn $ "old size: " ++ show oldSize --(takeMVar bestSolution)
+            putStrLn $ "new size: " ++ show newSize
+            putStrLn $ "delta:" ++ show (oldSize - newSize) ++ " (" ++
+                show (100.0 - (fromIntegral newSize / fromIntegral oldSize * 100.0) :: Double) ++ "% reduction)"
 

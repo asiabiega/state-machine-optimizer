@@ -4,22 +4,25 @@ MS=MachineSize.hs MachineSizeMain.hs
 OP=OptimizerMain.hs Optimizer2.hs Optimizer.hs
 SRC=AST.hs TesterMain.hs ${EV} ${MS} ${OP} FileUtils.hs
 
-all: smopt smsize smeval smtest
+all: smopt smsize smeval smtest smoptprof
 
 smopt: ${LP} ${SRC}
-	ghc --make -O2 OptimizerMain.hs -o smopt
+	ghc --make -O2 -Wall OptimizerMain.hs -o smopt
+
+smoptprof: ${LP} ${SRC}
+	/usr/bin/ghc -O2 -Wall -prof -auto-all -rtsopts OptimizerMain.hs -o smoptprof
 
 smsize: ${LP} ${SRC}
-	ghc --make -O2 MachineSizeMain.hs -o smsize
+	ghc --make -O2 -Wall MachineSizeMain.hs -o smsize
 
 smeval: ${LP} ${SRC}
-	ghc --make -O2 EvaluatorMain.hs -o smeval
+	ghc --make -O2 -Wall EvaluatorMain.hs -o smeval
 
 smtest: ${LP} ${SRC}
-	ghc --make -O2 TesterMain.hs -o smtest
+	ghc --make -O2 -Wall TesterMain.hs -o smtest
 
 Parser.hs: Parser.y
-	happy -g Parser.y
+	happy -a -g -c Parser.y
 
 Lexer.hs: Lexer.x
 	alex -g Lexer.x

@@ -1,23 +1,24 @@
 import Prelude hiding (lex)
 import System.Environment
 import System.Random
+import Control.Monad.State
 
 import Parser
 import Lexer
 import Evaluator
 import AST
 
-
 main :: IO ()
 main = do
-    char <- fmap (parse . lex) getContents
+    cont <- getContents
+    let (ast, state) = runState (parse . lex $ cont) tagStart
     args <- getArgs
     case args of
         (_:_:_) -> error "too many args supplied, use one Integer to set the machine state"
         [] -> error "no args supplied, use one Integer to set the machine state"
         [n] -> do
-            renv <- randomEnv char
+            renv <- randomEnv ast
             putStrLn $ "env: " ++ show renv
-            let (t, c) = runMachine (read n) char renv
+            let (t, c) = runMachine (read n) ast renv
             print t
             putStrLn $ "cost " ++ show c
