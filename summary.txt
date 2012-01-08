@@ -1,0 +1,128 @@
+alpha0.in
+    old size: 30
+    new size: 28
+    delta:2 (6.666666666666665% reduction)
+alpha1.in
+    old size: 24
+    new size: 22
+    delta:2 (8.333333333333337% reduction)
+alpha2.in
+    old size: 8976
+    new size: 8482
+    delta:494 (5.503565062388594% reduction)
+busker.in
+    old size: 576
+    new size: 510
+    delta:66 (11.458333333333337% reduction)
+cat.in
+    old size: 302
+    new size: 274
+    delta:28 (9.27152317880795% reduction)
+ifbusker.in
+    old size: 645
+    new size: 510
+    delta:135 (20.93023255813954% reduction)
+ifcat.in
+    old size: 361
+    new size: 314
+    delta:47 (13.019390581717449% reduction)
+ifjarboe.in
+    old size: 1616
+    new size: 1066
+    delta:550 (34.03465346534653% reduction)
+ifparrot.in
+    old size: 514
+    new size: 413
+    delta:101 (19.649805447470815% reduction)
+jarboe.in
+    old size: 1066
+    new size: 1066
+    delta:0 (0.0% reduction)
+mips0.in
+    old size: 3842
+    new size: 3430
+    delta:412 (10.723581467985422% reduction)
+parrot.in
+    old size: 380
+    new size: 373
+    delta:7 (1.8421052631578894% reduction)
+pentium0.in
+    old size: 8
+    new size: 7
+    delta:1 (12.5% reduction)
+pentium1.in
+    old size: 8
+    new size: 7
+    delta:1 (12.5% reduction)
+pentium2.in
+    old size: 8
+    new size: 7
+    delta:1 (12.5% reduction)
+pentium3.in
+    old size: 356
+    new size: 340
+    delta:16 (4.49438202247191% reduction)
+pentium4.in
+    old size: 382
+    new size: 364
+    delta:18 (4.712041884816753% reduction)
+pentium5.in
+    old size: 335336
+    new size: 328741
+    delta:6595 (1.9666841615573638% reduction)
+pessbusker.in
+    old size: 1892
+    new size: 1892
+    delta:0 (0.0% reduction)
+pesscat.in
+    old size: 799
+    new size: 799
+    delta:0 (0.0% reduction)
+pessjarboe.in
+    old size: 3153
+    new size: 3153
+    delta:0 (0.0% reduction)
+pessparrot.in
+    old size: 3291
+    new size: 2827
+    delta:464 (14.0990580370708% reduction)
+sim-intel.rtl0.in
+    old size: 115339
+    new size: 60793
+    delta:54546 (47.2918960629102% reduction)
+sim-sparc.rtl0.in
+    old size: 15370
+    new size: 15370
+    delta:0 (0.0% reduction)
+sim-sparc.rtl1.in
+    old size: 1804
+    new size: 1765
+    delta:39 (2.161862527716185% reduction)
+sim-sparc.rtl2.in
+    old size: 1219
+    new size: 409
+    delta:810 (66.44790812141099% reduction)
+sparc0.in
+    old size: 24
+    new size: 22
+    delta:2 (8.333333333333337% reduction)
+sparc1.in
+    old size: 76
+    new size: 52
+    delta:24 (31.57894736842105% reduction)
+sparc2.in
+    old size: 30
+    new size: 28
+    delta:2 (6.666666666666665% reduction)
+sparc3.in
+    old size: 14946
+    new size: 11722
+    delta:3224 (21.570988893349398% reduction)
+xs.rtl0.in
+    old size: 952
+    new size: 952
+    delta:0 (0.0% reduction)
+xs.rtl0.mc.in
+    old size: 3413
+    new size: 3406
+    delta:7 (0.20509815411661192% reduction)

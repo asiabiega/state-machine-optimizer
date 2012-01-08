@@ -16,6 +16,7 @@ optimizations2 = [(return . notAccessibleBranchRemoval, "not-accesible-branch-re
 -------------------------------------------------------------------------------------------------------------
 
 --INACCESSIBLE BRANCH REMOVAL
+--deletes if/elseif nodes that are contradictory, i.e. would never be executed
 
 notAccessibleBranchRemoval :: Character -> Character
 notAccessibleBranchRemoval = map (\(st, t)-> (st, naBranchRemoval t []))
@@ -47,6 +48,7 @@ naBranchRemoval t _ = t
 
 contradicts c = any (contradictsCond c)
 
+-- contradiction checking functions
 contradictsCond (TmEquals v k _) cond = checkIfContradicts v k cond
 contradictsCond (TmAnd conds _) cond = any (\x -> contradictsCond x cond) conds
 contradictsCond (TmOr conds _) cond = all (\x -> contradictsCond x cond) conds
@@ -58,6 +60,7 @@ checkIfContradicts v k (TmOr conds _) = all (checkIfContradicts v k) conds
 -------------------------------------------------------------------------------------------------------------
 
 --SAME ARG BRANCH REMOVAL
+-- deletes elseif nodes that are not reachable, because the same condition has been present in one of previous if/elseifs
 
 sameArgBranchRemoval :: Character -> Character
 sameArgBranchRemoval = map (\(st, t)-> (st, saBranchRemoval t))
@@ -80,6 +83,7 @@ rmDuplicated = nubBy (on (==) fst)
 -------------------------------------------------------------------------------------------------------------
 
 --'TRIVIAL AND' REMOVAL
+-- deletes same arguments from AND chain
 
 trivialAndRemoval :: Character -> Tagger Character
 trivialAndRemoval = mapM (\(st, t)-> do { mt <- trivialAndTermRemoval t; return (st, mt)})

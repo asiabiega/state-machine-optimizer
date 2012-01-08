@@ -1,0 +1,12 @@
+Package dependencies:
+    cabal install pretty
+
+Compiling:
+    make
+
+Optimizing module:
+    ./smopt [time] >> [output_filename]
+
+Random testing module:
+    ./smtest
+    
