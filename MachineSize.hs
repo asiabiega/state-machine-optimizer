@@ -23,8 +23,8 @@ mspan :: [(ValueSet, Term)] -> Integer
 mspan arms = let all_labels = concat (map fst arms) in
     maximum all_labels - minimum all_labels + 1
 
-msizeCondition (TmEquals _ _) = 6
-msizeCondition (TmAnd tests) = sum (map msizeCondition tests)
-msizeCondition (TmOr tests) = sum (map msizeCondition tests)
+msizeCondition (TmEquals _ _ _) = 6
+msizeCondition (TmAnd tests _) = sum (map msizeCondition tests)
+msizeCondition (TmOr tests _) = sum (map msizeCondition tests)
 msizeCondition TmFalse = 0
 msizeCondition TmTrue = 0

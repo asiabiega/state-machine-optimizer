@@ -4,6 +4,8 @@
 module Parser where
 
 import Lexer
+import Control.Monad.State
+import qualified Data.Map as Map
 import AST
 import qualified Data.Array as Happy_Data_Array
 import qualified GHC.Exts as Happy_GHC_Exts
@@ -313,40 +315,37 @@ happyReduction_13 (happy_x_5 `HappyStk`
 		 ((happy_var_3, happy_var_4)
 	) `HappyStk` happyRest}}
 
-happyReduce_14 = happyReduce 5# 8# happyReduction_14
+happyReduce_14 = happyMonadReduce 5# 8# happyReduction_14
 happyReduction_14 (happy_x_5 `HappyStk`
 	happy_x_4 `HappyStk`
 	happy_x_3 `HappyStk`
 	happy_x_2 `HappyStk`
 	happy_x_1 `HappyStk`
-	happyRest)
-	 = case happyOut14 happy_x_3 of { happy_var_3 -> 
+	happyRest) tk
+	 = happyThen (case happyOut14 happy_x_3 of { happy_var_3 -> 
 	case happyOutTok happy_x_4 of { ((_,TkInt happy_var_4)) -> 
-	happyIn12
-		 (TmEquals happy_var_3 happy_var_4
-	) `HappyStk` happyRest}}
+	( cachedCondition (TmEquals happy_var_3 happy_var_4 0))}}
+	) (\r -> happyReturn (happyIn12 r))
 
-happyReduce_15 = happyReduce 4# 8# happyReduction_15
+happyReduce_15 = happyMonadReduce 4# 8# happyReduction_15
 happyReduction_15 (happy_x_4 `HappyStk`
 	happy_x_3 `HappyStk`
 	happy_x_2 `HappyStk`
 	happy_x_1 `HappyStk`
-	happyRest)
-	 = case happyOut13 happy_x_3 of { happy_var_3 -> 
-	happyIn12
-		 (TmAnd happy_var_3
-	) `HappyStk` happyRest}
+	happyRest) tk
+	 = happyThen (case happyOut13 happy_x_3 of { happy_var_3 -> 
+	( cachedCondition (TmAnd happy_var_3 0))}
+	) (\r -> happyReturn (happyIn12 r))
 
-happyReduce_16 = happyReduce 4# 8# happyReduction_16
+happyReduce_16 = happyMonadReduce 4# 8# happyReduction_16
 happyReduction_16 (happy_x_4 `HappyStk`
 	happy_x_3 `HappyStk`
 	happy_x_2 `HappyStk`
 	happy_x_1 `HappyStk`
-	happyRest)
-	 = case happyOut13 happy_x_3 of { happy_var_3 -> 
-	happyIn12
-		 (TmOr happy_var_3
-	) `HappyStk` happyRest}
+	happyRest) tk
+	 = happyThen (case happyOut13 happy_x_3 of { happy_var_3 -> 
+	( cachedCondition (TmOr happy_var_3 0))}
+	) (\r -> happyReturn (happyIn12 r))
 
 happyReduce_17 = happySpecReduce_2  9# happyReduction_17
 happyReduction_17 happy_x_2
@@ -463,25 +462,17 @@ happyNewToken action sts stk (tk:tks) =
 happyError_ 15# tk tks = happyError' tks
 happyError_ _ tk tks = happyError' (tk:tks)
 
-newtype HappyIdentity a = HappyIdentity a
-happyIdentity = HappyIdentity
-happyRunIdentity (HappyIdentity a) = a
-
-instance Monad HappyIdentity where
-    return = HappyIdentity
-    (HappyIdentity p) >>= q = q p
-
-happyThen :: () => HappyIdentity a -> (a -> HappyIdentity b) -> HappyIdentity b
+happyThen :: () => State (Int, Map.Map Condition Int) a -> (a -> State (Int, Map.Map Condition Int) b) -> State (Int, Map.Map Condition Int) b
 happyThen = (>>=)
-happyReturn :: () => a -> HappyIdentity a
+happyReturn :: () => a -> State (Int, Map.Map Condition Int) a
 happyReturn = (return)
 happyThen1 m k tks = (>>=) m (\a -> k a tks)
-happyReturn1 :: () => a -> b -> HappyIdentity a
+happyReturn1 :: () => a -> b -> State (Int, Map.Map Condition Int) a
 happyReturn1 = \a tks -> (return) a
-happyError' :: () => [(Token)] -> HappyIdentity a
-happyError' = HappyIdentity . parseError
+happyError' :: () => [(Token)] -> State (Int, Map.Map Condition Int) a
+happyError' = parseError
 
-parse tks = happyRunIdentity happySomeParser where
+parse tks = happySomeParser where
   happySomeParser = happyThen (happyParse 0# tks) (\x -> happyReturn (happyOut4 x))
 
 happySeq = happyDontSeq

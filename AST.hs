@@ -3,24 +3,57 @@ module AST where
 import Data.List
 import Data.Function
 import Text.PrettyPrint
+import Control.Monad.State
+import qualified Data.Map as Map
+
+
+type TaggerState = (Int, Map.Map Condition Int)
+type Tagger a = State TaggerState a
+
+tagStart :: TaggerState
+tagStart = (0, Map.empty)
 
 data Term = TmIf Condition Term [(Condition, Term)] Term
             | TmDecision NewState Utterance
             | TmCase Variable [(ValueSet, Term)] Term
             deriving(Eq, Show)
 
-data Condition = TmEquals Variable Integer
-            | TmAnd [Condition]
-            | TmOr [Condition]
+type EqTag = Int
+
+data Condition = TmEquals Variable Integer EqTag
+            | TmAnd [Condition] EqTag
+            | TmOr [Condition] EqTag
             | TmTrue
             | TmFalse
-            deriving(Eq, Show)
+            deriving(Show, Ord)
+
+changeEqTag :: Condition -> Int -> Condition
+changeEqTag (TmEquals a b _) t = TmEquals a b t
+changeEqTag (TmAnd cnds _) t = TmAnd cnds t
+changeEqTag (TmOr cnds _) t = TmOr cnds t
+
+cachedCondition :: Condition -> Tagger Condition
+cachedCondition cond = do
+    (num, map) <- get
+    case Map.lookup cond map of
+        Just i -> return $ changeEqTag cond i
+        Nothing -> do
+            put (num+1, Map.insert cond num map)
+            return $ changeEqTag cond num
+
+instance Eq Condition where
+    TmEquals _ _ t == TmEquals _ _ t1 = t == t1
+    TmAnd _ t      == TmAnd _ t1      = t == t1
+    TmOr _ t       == TmOr _ t1       = t == t1
+    TmTrue         == TmTrue          = True
+    TmFalse        == TmFalse         = True
+    _              == _               = False
 
 data NewState = TmCurrent | TmState Integer
             deriving(Eq, Show)
 
 data Variable = TmVar String
-            deriving(Eq, Show)
+            deriving(Eq, Show, Ord)
 
 type StateNumber = Integer
 type ValueSet = [Integer]
@@ -55,9 +88,9 @@ ppVar :: Variable -> Doc
 ppVar (TmVar v) = parens $ text "VAR" <+> doubleQuotes (text v)
 
 ppCond :: Condition -> Doc
-ppCond (TmEquals var i) = parens $ text "EQUALS" <+> ppVar var <+> integer i
-ppCond (TmAnd conds) = parens $ text "AND" <+> vcat (map ppCond conds)
-ppCond (TmOr conds)  = parens $ text "OR"  <+> vcat (map ppCond conds)
+ppCond (TmEquals var i _) = parens $ text "EQUALS" <+> ppVar var <+> integer i
+ppCond (TmAnd conds _) = parens $ text "AND" <+> vcat (map ppCond conds)
+ppCond (TmOr conds _)  = parens $ text "OR"  <+> vcat (map ppCond conds)
 
 ppArm :: (ValueSet, Term) -> Doc
 ppArm (vs, t) = parens $ text "ARM" <+> parens (vcat $ map integer vs) $$ ppTerm t
@@ -86,9 +119,9 @@ varsCnd :: Condition -> [String]
 varsCnd cnd = map fst (varsValsCnd cnd)
 
 varsValsCnd :: Condition -> [(String, Integer)]
-varsValsCnd (TmEquals (TmVar v) i) = [(v, i)]
-varsValsCnd (TmAnd cnds) = vunion $ map varsValsCnd cnds
-varsValsCnd (TmOr cnds) = vunion $ map varsValsCnd cnds
+varsValsCnd (TmEquals (TmVar v) i _) = [(v, i)]
+varsValsCnd (TmAnd cnds _) = vunion $ map varsValsCnd cnds
+varsValsCnd (TmOr cnds _) = vunion $ map varsValsCnd cnds
 varsValsCnd TmTrue = []
 varsValsCnd TmFalse = []
 

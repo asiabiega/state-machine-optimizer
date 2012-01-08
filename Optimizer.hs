@@ -8,12 +8,19 @@ import Optimizer2
 import MachineSize
 import AST
 
-changeOrder :: Character -> MVar (Integer, Character) -> IO ()
-changeOrder char mvar = forever $ do
+
+changeOrder :: Character -> TaggerState -> MVar (Integer, Character) -> IO ()
+changeOrder char state mvar = forever $ do
         let clist = charToConditionList char
-        newAst <- fmap fastOptimizations (randomOrderAst clist)
+        randomAst <- randomOrderAst clist
+        let (newAst, newState) = runState (optimize randomAst) state
         let newSize = msize newAst
-        modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize then return (newSize, newAst) else return (oldSize, oldAst)
+        modifyMVar_ mvar $ \(oldSize, oldAst) -> if oldSize > newSize
+            then return (newSize, newAst)
+            else return (oldSize, oldAst)
+
+optimize :: Character -> Tagger Character
+optimize char = (return . sameArgBranchRemoval $ char) >>= (return . notAccessibleBranchRemoval) >>= trivialAndRemoval
 
 charToConditionList :: Character -> [([Condition], Term)] --no AND nor OR conditions, terms - only decisions
 charToConditionList = undefined
@@ -21,14 +28,13 @@ charToConditionList = undefined
 randomOrderAst :: [([Condition], Term)] -> IO Character
 randomOrderAst = undefined
 
-fastOptimizations :: Character -> Character
-fastOptimizations = fixOptimizations $ foldl' (.) id (map fst $ optimizations ++ optimizations2)
+optimizations :: [(Character -> Tagger Character, String)]
+optimizations = optimizations1 ++ optimizations2
 
-optimizations :: [(Character -> Character, String)]
-optimizations = [(contradictoryAndRemoval, "contradictory-and-removal")
-                ,(stateNumberWildcarder, "state-number-wildcarder")
-                ,(ifCaseInterchange, "if-case-interchange")]
-
+optimizations1 :: [(Character -> Tagger Character, String)]
+optimizations1 = [] --[(contradictoryAndRemoval, "contradictory-and-removal")
+--                ,(stateNumberWildcarder, "state-number-wildcarder")
+--                ,(ifCaseInterchange, "if-case-interchange")]
 
 -- | Applies given optimization, until a fixpoint is reached
 fixOptimizations :: (Character -> Character) -> Character -> Character
@@ -36,6 +42,7 @@ fixOptimizations opt char = let ochar = opt char in
     if ochar == char
         then ochar
         else fixOptimizations opt ochar
+{-
 
 -- | Contradictory and condition removal, it changes the whole condition to TmFalse, when TmAnd conditions are contradictory
 contradictoryAndRemoval :: Character -> Character
@@ -152,3 +159,4 @@ ifCaseInterchange = map ifCaseInterchangeRule where
     simplifyArms (([n], t):arms) = ([n], t) : simplifyArms arms
     simplifyArms ((n:ns, t):arms) = map (\i -> ([i], t)) (n:ns) ++ simplifyArms arms
     simplifyArms [] = []
+-}

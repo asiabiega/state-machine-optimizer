@@ -16,41 +16,36 @@ import MachineSize
 import Optimizer
 import Optimizer2
 import FileUtils
-
-allOptimizations = optimizations ++ optimizations2
+import MainCommon
 
 main = do
     files <- listFiles "inputs"
     hSetBuffering stdout NoBuffering
     forever $ do
         file <- randomElem files
-
         cont <- readFile file
-        let oldAst = parse . lex $ cont
 
-        (randomOptimizationsWithNames) <- filterM (const (randomIO :: IO Bool)) allOptimizations
-        let randomOptimizations = foldl (.) id $ map fst randomOptimizationsWithNames
+        (randomOptimizationsWithNames) <- filterM (const (randomIO :: IO Bool)) optimizations
+        let randomOptimizations = foldl (>>=) return $ map fst randomOptimizationsWithNames
         let randomOptimizationNames = map snd randomOptimizationsWithNames
+
+        let ((oldAst, _), (newAst, _)) = oldNewAstWithSize randomOptimizations cont
 
         renv <- randomEnv oldAst
 
         randomStartingState <- randomElem (startingStates oldAst)
 
-        ast <- timeout 10000000 (return . randomOptimizations $ oldAst)
-        case ast of
-            Nothing -> hPutStrLn stderr "timed out"
-            Just newAst -> do
-                let (ot, oc) = runMachine randomStartingState oldAst renv
-                let (nt, nc) = runMachine randomStartingState newAst renv
-                if ot /= nt
-                    then do
-                        putStrLn ""
-                        putStrLn $ "file:" ++ show file
-                        putStrLn $ "env:" ++ show renv
-                        putStrLn $ "starting state:" ++ show randomStartingState
-                        putStrLn $ "optimizations" ++ show randomOptimizationNames
-                        putStrLn $ "difference:" ++ show (ot, oc) ++ " " ++ show (nt, nc)
-                    else putStr "."
+        let (ot, oc) = runMachine randomStartingState oldAst renv
+        let (nt, nc) = runMachine randomStartingState newAst renv
+        if ot /= nt
+            then do
+                putStrLn ""
+                putStrLn $ "file:" ++ show file
+                putStrLn $ "env:" ++ show renv
+                putStrLn $ "starting state:" ++ show randomStartingState
+                putStrLn $ "optimizations" ++ show randomOptimizationNames
+                putStrLn $ "difference:" ++ show (ot, oc) ++ " " ++ show (nt, nc)
+            else putStr "."
 
 randomIndex :: [a] -> IO Int
 randomIndex l = randomRIO (0, length l - 1)

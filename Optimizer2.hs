@@ -5,8 +5,9 @@ import AST
 import Data.Function
 import Data.List
 
-optimizations2 = [(notAccessibleBranchRemoval, "not-accesible-branch-removal")
-                 ,(sameArgBranchRemoval, "same-arg-branch-removal")
+optimizations2 :: [(Character -> Tagger Character, String)]
+optimizations2 = [(return . notAccessibleBranchRemoval, "not-accesible-branch-removal")
+                 ,(return . sameArgBranchRemoval, "same-arg-branch-removal")
                  ,(trivialAndRemoval, "trivial-and-removal")]
 -------------------------------------------------------------------------------------------------------------
 
@@ -44,13 +45,13 @@ naBranchRemoval t assuptions = t
 
 contradicts c = any (contradictsCond c)
 
-contradictsCond (TmEquals v k) cond = checkIfContradicts v k cond
-contradictsCond (TmAnd conds) cond = any (\x -> contradictsCond x cond) conds
-contradictsCond (TmOr conds) cond = all (\x -> contradictsCond x cond) conds
+contradictsCond (TmEquals v k _) cond = checkIfContradicts v k cond
+contradictsCond (TmAnd conds _) cond = any (\x -> contradictsCond x cond) conds
+contradictsCond (TmOr conds _) cond = all (\x -> contradictsCond x cond) conds
 
-checkIfContradicts v k (TmEquals v2 k2) = v == v2 && k /= k2
-checkIfContradicts v k (TmAnd conds) = any (checkIfContradicts v k) conds
-checkIfContradicts v k (TmOr conds) = all (checkIfContradicts v k) conds
+checkIfContradicts v k (TmEquals v2 k2 _) = v == v2 && k /= k2
+checkIfContradicts v k (TmAnd conds _) = any (checkIfContradicts v k) conds
+checkIfContradicts v k (TmOr conds _) = all (checkIfContradicts v k) conds
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -78,29 +79,28 @@ rmDuplicated = nubBy (on (==) fst)
 
 --'TRIVIAL AND' REMOVAL
 
-trivialAndRemoval :: Character -> Character
-trivialAndRemoval = map (\(st, t)-> (st, trivialAndTermRemoval t))
+trivialAndRemoval :: Character -> Tagger Character
+trivialAndRemoval = mapM (\(st, t)-> do { mt <- trivialAndTermRemoval t; return (st, mt)})
 
-trivialAndTermRemoval (TmIf cond tt elifs tf) = 
-    let cond_ = trivialAndConditionRemoval cond in
-    let tt_ = trivialAndTermRemoval tt in
-    let elifs_ = map (\(x,y) -> (trivialAndConditionRemoval x, trivialAndTermRemoval y)) elifs in
-    let tf_ = trivialAndTermRemoval tf in
-    TmIf cond_ tt_ elifs_ tf_
+trivialAndTermRemoval :: Term -> Tagger Term
+trivialAndTermRemoval (TmIf cond tt elifs tf) = do
+    cond_ <- trivialAndConditionRemoval cond
+    tt_ <- trivialAndTermRemoval tt
+    elifs_ <- mapM (\(x,y) -> do { mx <- trivialAndConditionRemoval x; my <- trivialAndTermRemoval y; return (mx, my)}) elifs
+    tf_ <- trivialAndTermRemoval tf
+    return $ TmIf cond_ tt_ elifs_ tf_
+trivialAndTermRemoval (TmCase (TmVar x) arms def) = do
+    arms_ <- mapM (\(x,y) -> do { my <- trivialAndTermRemoval y; return (x, my)}) arms
+    def_ <- trivialAndTermRemoval def
+    return $ TmCase (TmVar x) arms_ def_
+trivialAndTermRemoval t = return t
 
-trivialAndTermRemoval (TmCase (TmVar x) arms def) = 
-    let arms_ = map (\(x,y) -> (x, trivialAndTermRemoval y)) arms in
-    let def_ = trivialAndTermRemoval def in
-    TmCase (TmVar x) arms_ def_
-
-trivialAndTermRemoval t = t
-
-
-trivialAndConditionRemoval (TmAnd tests) = 
-    let tests_ = map trivialAndConditionRemoval tests in
-    TmAnd $ rmDuplicatedCond tests_
-trivialAndConditionRemoval (TmOr tests) = TmOr $ map trivialAndConditionRemoval tests
-trivialAndConditionRemoval t = t
+trivialAndConditionRemoval :: Condition -> Tagger Condition
+trivialAndConditionRemoval (TmAnd tests _) = do
+    tests_ <- mapM trivialAndConditionRemoval tests
+    cachedCondition $ TmAnd (rmDuplicatedCond tests_) 0
+trivialAndConditionRemoval (TmOr tests _) = mapM trivialAndConditionRemoval tests >>= (\tests_ -> return $ TmOr tests_ 0) >>= cachedCondition
+trivialAndConditionRemoval t = return t
 
 rmDuplicatedCond [] = []
 rmDuplicatedCond (cond:xs) = cond : rmDuplicatedCond (filter (\x -> not(x == cond)) xs)
