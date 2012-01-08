@@ -39,8 +39,8 @@ main = do
         _ -> do
             let time = read arg
             cont <- getContents
---            bestSolution <- newMVar 5
             let oldAst = parse . lex $ cont
+            bestSolution <- newMVar (msize oldAst, oldAst) --deepseq
             ast <- timeout (time*1000000) (return . optimize $ oldAst)
             case ast of
                 Nothing -> hPutStrLn stderr "timed out"

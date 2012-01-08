@@ -74,19 +74,23 @@ vars char = map fst (varsVals char)
 varsVals :: Character -> [(String, [Integer])]
 varsVals ch = map (foldl (\(_,ts) (b, t) -> (b,t:ts)) (error "empty group", [])) $ groupBy (on (==) fst) $ sort $ varsVals' ch where
     varsVals' :: Character -> [(String, Integer)]
-    varsVals' rules = vunion $ map varsRule rules
+    varsVals' rules = vunion $ map varsValsRule rules
 
-    varsRule (_, term) = varsTerm term
+    varsValsRule (_, term) = varsValsTerm term
 
-    varsTerm (TmIf cnd t1 elseifs t2) = vunion $ map varsTerm ([t1, t2] ++ map snd elseifs) ++ map varsCnd (cnd : map fst elseifs)
-    varsTerm (TmDecision _ _) = []
-    varsTerm (TmCase (TmVar v) arms t) = map (\t -> (v,t)) (concatMap fst arms)  ++  vunion (map varsTerm $ t : map snd arms)
+    varsValsTerm (TmIf cnd t1 elseifs t2) = vunion $ map varsValsTerm ([t1, t2] ++ map snd elseifs) ++ map varsValsCnd (cnd : map fst elseifs)
+    varsValsTerm (TmDecision _ _) = []
+    varsValsTerm (TmCase (TmVar v) arms t) = map (\t -> (v,t)) (concatMap fst arms)  ++  vunion (map varsValsTerm $ t : map snd arms)
 
-    varsCnd (TmEquals (TmVar v) i) = [(v, i)]
-    varsCnd (TmAnd cnds) = vunion $ map varsCnd cnds
-    varsCnd (TmOr cnds) = vunion $ map varsCnd cnds
-    varsCnd TmTrue = []
-    varsCnd TmFalse = []
+varsCnd :: Condition -> [String]
+varsCnd cnd = map fst (varsValsCnd cnd)
+
+varsValsCnd :: Condition -> [(String, Integer)]
+varsValsCnd (TmEquals (TmVar v) i) = [(v, i)]
+varsValsCnd (TmAnd cnds) = vunion $ map varsValsCnd cnds
+varsValsCnd (TmOr cnds) = vunion $ map varsValsCnd cnds
+varsValsCnd TmTrue = []
+varsValsCnd TmFalse = []
 
 vunion :: Eq a => [[a]] -> [a]
 vunion = foldl' union []

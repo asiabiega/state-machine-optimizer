@@ -17,10 +17,11 @@ msizeTerm (TmIf cond tt elifs tf) = let msize_elifs = sum (map (\(x,y) -> (msize
 msizeTerm (TmDecision TmCurrent _) = 3
 msizeTerm (TmDecision _ _) = 4
 msizeTerm (TmCase v arms def) = let msize_arms = sum (map (\(_,y) -> (msizeTerm y)) arms)
-                                    in 10 + msize_arms + (mspan arms) + (msizeTerm def)
+    in 10 + msize_arms + (mspan arms) + (msizeTerm def)
 
-mspan arms = let all_labels = concat (map fst arms)
-    in (maximum all_labels) - (minimum all_labels) + 1
+mspan :: [(ValueSet, Term)] -> Integer
+mspan arms = let all_labels = concat (map fst arms) in
+    maximum all_labels - minimum all_labels + 1
 
 msizeCondition (TmEquals _ _) = 6
 msizeCondition (TmAnd tests) = sum (map msizeCondition tests)

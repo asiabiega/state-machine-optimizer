@@ -26,7 +26,9 @@ fastOptimizations = fixOptimizations $ foldl' (.) id (map fst $ optimizations ++
 
 optimizations :: [(Character -> Character, String)]
 optimizations = [(contradictoryAndRemoval, "contradictory-and-removal")
-                ,(stateNumberWildcarder, "state-number-wildcarder")]
+                ,(stateNumberWildcarder, "state-number-wildcarder")
+                ,(ifCaseInterchange, "if-case-interchange")]
+
 
 -- | Applies given optimization, until a fixpoint is reached
 fixOptimizations :: (Character -> Character) -> Character -> Character
@@ -94,3 +96,53 @@ stateNumberWildcarder = map stateNumberWildcarderRule where
         return $ TmCase var mas mt1
     stateNumberWildcarderTerm a@(TmDecision TmCurrent _) = return a
     stateNumberWildcarderTerm a@(TmDecision (TmState i) u) = gets $ \i2 -> if i == i2 then TmDecision TmCurrent u else a
+
+ifCaseInterchange :: Character -> Character
+ifCaseInterchange = map ifCaseInterchangeRule where
+    ifCaseInterchangeRule (stateNums, term) = (stateNums, ifCaseInterchangeTerm term)
+
+    ifCaseInterchangeTerm tif@(TmIf cnd _ elseifs _) = let tcase@(TmCase _ arms _) = caseFromIf tif in
+        if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+            then tcase
+            else tif
+    ifCaseInterchangeTerm tcase@(TmCase _ arms _) = let tif@(TmIf cnd _ elseifs _) = ifFromCase tcase in
+        if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+            then tcase
+            else tif
+    ifCaseInterchangeTerm a = a
+
+    caseFromIf tif@(TmIf cnd t1 elseifs t2) = maybe tif
+        (\v -> TmCase (TmVar v) (armsFromElseifs ((cnd,t1):elseifs)) t2) (cleanIf tif)
+
+    armsFromElseifs ((TmEquals _ val, term):elseifs) = ([val], term) : armsFromElseifs elseifs
+    armsFromElseifs ((TmAnd cnds, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
+    armsFromElseifs ((TmOr cnds, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
+    armsFromElseifs [] = []
+    --TODO it has to have false ands removal immediately before
+    --TODO maybe split ands to those, who can be transformed
+
+    valueSetFromCnds (TmEquals _ v:cs) = v : valueSetFromCnds cs
+    valueSetFromCnds (TmFalse:cs) = valueSetFromCnds cs
+    valueSetFromCnds (TmTrue:cs) = valueSetFromCnds cs
+    valueSetFromCnds (TmOr cnds:cs) = valueSetFromCnds (cnds ++ cs)
+    valueSetFromCnds (TmAnd cnds:cs) = valueSetFromCnds (cnds ++ cs)
+
+    -- | has only one variable in conditions
+    cleanIf :: Term -> Maybe String
+    cleanIf (TmIf cnd _ elseifs t2) = case vunion $ varsCnd cnd : map (varsCnd . fst) elseifs of
+        [v] -> Just v
+        _ -> Nothing
+
+    ifFromCase (TmCase var arms def) = case simplifyArms arms of
+        [] -> def
+        (vals, term):as -> TmIf (orFromVals var vals) term (elseifsFromArms var as) def
+
+    orFromVals :: Variable -> [Integer] -> Condition
+    orFromVals var vs = TmOr (map (\v -> TmEquals var v) vs)
+
+    elseifsFromArms var ((vals, term):as) = (orFromVals var vals, term) : elseifsFromArms var as
+    elseifsFromArms _ [] = []
+
+    simplifyArms (([n], t):arms) = ([n], t) : simplifyArms arms
+    simplifyArms ((n:ns, t):arms) = map (\i -> ([i], t)) (n:ns) ++ simplifyArms arms
+    simplifyArms [] = []
