@@ -101,14 +101,18 @@ ifCaseInterchange :: Character -> Character
 ifCaseInterchange = map ifCaseInterchangeRule where
     ifCaseInterchangeRule (stateNums, term) = (stateNums, ifCaseInterchangeTerm term)
 
-    ifCaseInterchangeTerm tif@(TmIf cnd _ elseifs _) = let tcase@(TmCase _ arms _) = caseFromIf tif in
-        if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+    ifCaseInterchangeTerm tif@(TmIf cnd _ elseifs _) = case caseFromIf tif of
+        tcase@(TmCase _ arms _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
             then tcase
             else tif
-    ifCaseInterchangeTerm tcase@(TmCase _ arms _) = let tif@(TmIf cnd _ elseifs _) = ifFromCase tcase in
-        if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+        _ -> tif
+
+    ifCaseInterchangeTerm tcase@(TmCase _ arms _) = case ifFromCase tcase of
+        tif@(TmIf cnd _ elseifs _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
             then tcase
             else tif
+        _ -> tcase
+
     ifCaseInterchangeTerm a = a
 
     caseFromIf tif@(TmIf cnd t1 elseifs t2) = maybe tif
@@ -121,11 +125,13 @@ ifCaseInterchange = map ifCaseInterchangeRule where
     --TODO it has to have false ands removal immediately before
     --TODO maybe split ands to those, who can be transformed
 
+    valueSetFromCnds :: [Condition] -> [Integer]
     valueSetFromCnds (TmEquals _ v:cs) = v : valueSetFromCnds cs
     valueSetFromCnds (TmFalse:cs) = valueSetFromCnds cs
     valueSetFromCnds (TmTrue:cs) = valueSetFromCnds cs
     valueSetFromCnds (TmOr cnds:cs) = valueSetFromCnds (cnds ++ cs)
     valueSetFromCnds (TmAnd cnds:cs) = valueSetFromCnds (cnds ++ cs)
+    valueSetFromCnds [] = []
 
     -- | has only one variable in conditions
     cleanIf :: Term -> Maybe String

@@ -13,7 +13,7 @@ import Optimizer2
 import FileUtils
 
 optimize :: Character -> Character
-optimize = sameArgBranchRemoval . notAccessibleBranchRemoval . stateNumberWildcarder . contradictoryAndRemoval . trivialAndRemoval
+optimize = (sameArgBranchRemoval . notAccessibleBranchRemoval . stateNumberWildcarder . contradictoryAndRemoval . ifCaseInterchange . trivialAndRemoval)
 
 sizePairContent :: String -> IO (Integer, Integer)
 sizePairContent cont = do
