@@ -4,7 +4,9 @@ MS=MachineSize.hs MachineSizeMain.hs
 OP=OptimizerMain.hs Optimizer2.hs Optimizer.hs
 SRC=AST.hs TesterMain.hs ${EV} ${MS} ${OP} FileUtils.hs
 
-all: smopt smsize smeval smtest smoptprof
+all: smopt smsize smeval smtest
+
+prof: smoptprof
 
 smopt: ${LP} ${SRC}
 	ghc --make -O2 -Wall OptimizerMain.hs -o smopt
