@@ -31,6 +31,7 @@ changeEqTag :: Condition -> Int -> Condition
 changeEqTag (TmEquals a b _) t = TmEquals a b t
 changeEqTag (TmAnd cnds _) t = TmAnd cnds t
 changeEqTag (TmOr cnds _) t = TmOr cnds t
+changeEqTag a _ = error $ "changeEqTag " ++ show a
 
 cachedCondition :: Condition -> Tagger Condition
 cachedCondition cond = do
@@ -91,6 +92,7 @@ ppCond :: Condition -> Doc
 ppCond (TmEquals var i _) = parens $ text "EQUALS" <+> ppVar var <+> integer i
 ppCond (TmAnd conds _) = parens $ text "AND" <+> vcat (map ppCond conds)
 ppCond (TmOr conds _)  = parens $ text "OR"  <+> vcat (map ppCond conds)
+ppCond a = error $ "ppCond wrong optimization order, remove TmTrue and TmFalse " ++ show a
 
 ppArm :: (ValueSet, Term) -> Doc
 ppArm (vs, t) = parens $ text "ARM" <+> parens (vcat $ map integer vs) $$ ppTerm t
@@ -102,7 +104,7 @@ startingStates :: Character -> [StateNumber]
 startingStates = concatMap fst
 
 vars :: Character -> [String]
-vars char = map fst (varsVals char)
+vars chr = map fst (varsVals chr)
 
 varsVals :: Character -> [(String, [Integer])]
 varsVals ch = map (foldl (\(_,ts) (b, t) -> (b,t:ts)) (error "empty group", [])) $ groupBy (on (==) fst) $ sort $ varsVals' ch where
@@ -113,7 +115,7 @@ varsVals ch = map (foldl (\(_,ts) (b, t) -> (b,t:ts)) (error "empty group", []))
 
     varsValsTerm (TmIf cnd t1 elseifs t2) = vunion $ map varsValsTerm ([t1, t2] ++ map snd elseifs) ++ map varsValsCnd (cnd : map fst elseifs)
     varsValsTerm (TmDecision _ _) = []
-    varsValsTerm (TmCase (TmVar v) arms t) = map (\t -> (v,t)) (concatMap fst arms)  ++  vunion (map varsValsTerm $ t : map snd arms)
+    varsValsTerm (TmCase (TmVar v) arms t1) = map (\t -> (v,t)) (concatMap fst arms)  ++  vunion (map varsValsTerm $ t1 : map snd arms)
 
 varsCnd :: Condition -> [String]
 varsCnd cnd = map fst (varsValsCnd cnd)

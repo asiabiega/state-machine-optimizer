@@ -1,23 +1,15 @@
 import Prelude hiding (lex)
-import System.Timeout
-import System.Environment
 import System.IO
-import System.Exit
-import Control.Concurrent.MVar
 import System.Random hiding (split)
-import Data.List
 import Control.Monad
 
-import Lexer
-import Parser
 import AST
 import Evaluator
-import MachineSize
 import Optimizer
-import Optimizer2
 import FileUtils
 import MainCommon
 
+main :: IO ()
 main = do
     files <- listFiles "inputs"
     hSetBuffering stdout NoBuffering

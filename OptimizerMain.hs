@@ -1,17 +1,10 @@
-import Prelude hiding (lex)
-import System.Timeout
 import System.Environment
 import System.IO
 import Control.Concurrent.MVar
 import Control.Monad.State
-import qualified Data.Map as Map
 
-import Lexer
-import Parser
 import AST
-import MachineSize
 import Optimizer
-import Optimizer2
 import FileUtils
 import MainCommon
 
@@ -34,7 +27,7 @@ main = do
         _ -> do
 --            let time = read arg
             cont <- getContents
-            ((oldAst, oldSize), (newAst, newSize)) <- oldNewAstWithSize optimize cont
+            ((_, oldSize), (newAst, newSize)) <- oldNewAstWithSize optimize cont
 --            bestSolution <- newMVar (msize oldAst, oldAst)
 --            ast <- timeout (time*1000000) (return $ fst $ runState (optimize $ oldAst) state)
 --            case ast of

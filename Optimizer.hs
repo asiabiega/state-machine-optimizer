@@ -38,9 +38,9 @@ optimizations :: [(Character -> Tagger Character, String)]
 optimizations = optimizations1 ++ optimizations2
 
 optimizations1 :: [(Character -> Tagger Character, String)]
-optimizations1 = [(contradictoryAndRemoval, "contradictory-and-removal")]
---                ,(stateNumberWildcarder, "state-number-wildcarder")
---                ,(ifCaseInterchange, "if-case-interchange")]
+optimizations1 = [(contradictoryAndRemoval, "contradictory-and-removal")
+                 ,(return . stateNumberWildcarder, "state-number-wildcarder")
+                 ,(ifCaseInterchange, "if-case-interchange")]
 
 -- | Applies given optimization, until a fixpoint is reached
 fixOptimizations :: (Character -> Character) -> Character -> Character
@@ -100,7 +100,7 @@ contradictoryAndRemoval = mapM contradictoryAndRemovalRule where
         Nothing -> False
         Just i2 -> i2 /= i
 
-{-
+
 -- | State number wildcarder, it changes an explicit state in a TmDecision statement to a wildcard if able
 stateNumberWildcarder :: Character -> Character
 stateNumberWildcarder = map stateNumberWildcarderRule where
@@ -126,59 +126,81 @@ stateNumberWildcarder = map stateNumberWildcarderRule where
     stateNumberWildcarderTerm a@(TmDecision TmCurrent _) = return a
     stateNumberWildcarderTerm a@(TmDecision (TmState i) u) = gets $ \i2 -> if i == i2 then TmDecision TmCurrent u else a
 
-ifCaseInterchange :: Character -> Character
-ifCaseInterchange = map ifCaseInterchangeRule where
-    ifCaseInterchangeRule (stateNums, term) = (stateNums, ifCaseInterchangeTerm term)
 
-    ifCaseInterchangeTerm tif@(TmIf cnd _ elseifs _) = case caseFromIf tif of
-        tcase@(TmCase _ arms _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
-            then tcase
-            else tif
-        _ -> tif
+ifCaseInterchange :: Character -> Tagger Character
+ifCaseInterchange = mapM ifCaseInterchangeRule where
+    ifCaseInterchangeRule :: Rule -> Tagger Rule
+    ifCaseInterchangeRule (stateNums, term) = do { mt <- ifCaseInterchangeTerm term; return (stateNums, mt)}
 
-    ifCaseInterchangeTerm tcase@(TmCase _ arms _) = case ifFromCase tcase of
-        tif@(TmIf cnd _ elseifs _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
-            then tcase
-            else tif
-        _ -> tcase
+    ifCaseInterchangeTerm :: Term -> Tagger Term
+    ifCaseInterchangeTerm tif@(TmIf cnd _ elseifs _) = do
+        mtcase <- caseFromIf tif
+        return $ case mtcase of
+            tcase@(TmCase _ arms _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+                then tcase
+                else tif
+            _ -> tif
 
-    ifCaseInterchangeTerm a = a
+    ifCaseInterchangeTerm tcase@(TmCase _ arms _) = do
+        mtif <- ifFromCase tcase
+        return $ case mtif of
+            tif@(TmIf cnd _ elseifs _) -> if msizeCondition cnd + sum (map (msizeCondition . fst) elseifs) > 10 + mspan arms
+                then tcase
+                else tif
+            _ -> tcase
 
-    caseFromIf tif@(TmIf cnd t1 elseifs t2) = maybe tif
-        (\v -> TmCase (TmVar v) (armsFromElseifs ((cnd,t1):elseifs)) t2) (cleanIf tif)
+    ifCaseInterchangeTerm a = return a
 
-    armsFromElseifs ((TmEquals _ val, term):elseifs) = ([val], term) : armsFromElseifs elseifs
-    armsFromElseifs ((TmAnd cnds, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
-    armsFromElseifs ((TmOr cnds, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
+    caseFromIf :: Term -> Tagger Term
+    caseFromIf tif@(TmIf cnd t1 elseifs t2) = case cleanIf tif of
+        Nothing -> return tif
+        Just v -> let marms = armsFromElseifs ((cnd,t1):elseifs) in return $ TmCase (TmVar v) marms t2
+    caseFromIf a = error $ "caseFromIf " ++ show a
+
+    armsFromElseifs :: [(Condition, Term)] -> [(ValueSet, Term)]
+    armsFromElseifs ((TmEquals _ val _, term):elseifs) = ([val], term) : armsFromElseifs elseifs
+    armsFromElseifs ((TmAnd cnds _, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
+    armsFromElseifs ((TmOr cnds _, term):elseifs) = (valueSetFromCnds cnds, term) : armsFromElseifs elseifs
     armsFromElseifs [] = []
+    armsFromElseifs a = error $ "armsFromElseIfs " ++ show a
     --TODO it has to have false ands removal immediately before
     --TODO maybe split ands to those, who can be transformed
 
     valueSetFromCnds :: [Condition] -> [Integer]
-    valueSetFromCnds (TmEquals _ v:cs) = v : valueSetFromCnds cs
+    valueSetFromCnds (TmEquals _ v _:cs) = v : valueSetFromCnds cs
     valueSetFromCnds (TmFalse:cs) = valueSetFromCnds cs
     valueSetFromCnds (TmTrue:cs) = valueSetFromCnds cs
-    valueSetFromCnds (TmOr cnds:cs) = valueSetFromCnds (cnds ++ cs)
-    valueSetFromCnds (TmAnd cnds:cs) = valueSetFromCnds (cnds ++ cs)
+    valueSetFromCnds (TmOr cnds _:cs) = valueSetFromCnds (cnds ++ cs)
+    valueSetFromCnds (TmAnd cnds _:cs) = valueSetFromCnds (cnds ++ cs)
     valueSetFromCnds [] = []
 
     -- | has only one variable in conditions
     cleanIf :: Term -> Maybe String
-    cleanIf (TmIf cnd _ elseifs t2) = case vunion $ varsCnd cnd : map (varsCnd . fst) elseifs of
+    cleanIf (TmIf cnd _ elseifs _) = case vunion $ varsCnd cnd : map (varsCnd . fst) elseifs of
         [v] -> Just v
         _ -> Nothing
+    cleanIf a = error $ "cleanIf " ++ show a
 
+    ifFromCase :: Term -> Tagger Term
     ifFromCase (TmCase var arms def) = case simplifyArms arms of
-        [] -> def
-        (vals, term):as -> TmIf (orFromVals var vals) term (elseifsFromArms var as) def
+        [] -> return def
+        (vals, term):as -> do
+            mor <- orFromVals var vals
+            mei <- elseifsFromArms var as
+            return $ TmIf mor term mei def
+    ifFromCase a = error $ "ifFromCase " ++ show a
 
-    orFromVals :: Variable -> [Integer] -> Condition
-    orFromVals var vs = TmOr (map (\v -> TmEquals var v) vs)
+    orFromVals :: Variable -> [Integer] -> Tagger Condition
+    orFromVals var vs = do
+        mcnds <- mapM (\v -> cachedCondition $ TmEquals var v 0) vs
+        cachedCondition $ TmOr mcnds 0
 
-    elseifsFromArms var ((vals, term):as) = (orFromVals var vals, term) : elseifsFromArms var as
-    elseifsFromArms _ [] = []
+    elseifsFromArms :: Variable -> [(ValueSet, Term)] -> Tagger [(Condition, Term)]
+    elseifsFromArms var ((vals, term):as) = do
+        mh <- orFromVals var vals
+        mt <- elseifsFromArms var as
+        return $ (mh, term) : mt
+    elseifsFromArms _ [] = return []
 
-    simplifyArms (([n], t):arms) = ([n], t) : simplifyArms arms
-    simplifyArms ((n:ns, t):arms) = map (\i -> ([i], t)) (n:ns) ++ simplifyArms arms
+    simplifyArms ((ns, t):arms) = map (\i -> ([i], t)) ns ++ simplifyArms arms
     simplifyArms [] = []
--}
