@@ -7,6 +7,8 @@ import Lexer
 import Evaluator
 import AST
 
+-- Author: Aleksander Balicki
+-- | This is a binary for running the evaluation, run by cat machinefile | ./smeval STARTINGSTATE, it randomizes the environment
 main :: IO ()
 main = do
     cont <- getContents

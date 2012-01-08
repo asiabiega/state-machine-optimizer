@@ -1,7 +1,8 @@
 {
 {-# OPTIONS_GHC -w #-}
 module Parser where
-
+-- Author: Aleksander Balicki
+-- A parser
 import Lexer
 import Control.Monad.State
 import qualified Data.Map as Map

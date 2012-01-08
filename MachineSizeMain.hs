@@ -5,7 +5,8 @@ import MachineSize
 import Control.Monad.State
 import qualified Data.Map as Map
 
--- To run, pipe the machine into the binary
+-- Author: Aleksander Balicki
+-- Binary for computing the size of the machine, cat machinefile | ./smsize
 
 main = do
     cont <- getContents

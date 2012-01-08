@@ -1,4 +1,6 @@
 module MainCommon where
+-- Author: Aleksander Balicki
+-- Some common functions for the binaries, controller for the optimizations and size computation
 import Prelude hiding (lex)
 import Control.Monad.State
 import System.Timeout

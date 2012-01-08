@@ -1,4 +1,6 @@
 module Optimizer where
+-- Author: Aleksander Balicki
+-- Contains 3 deterministic optimizations and one not-finished that would introduce some brute force
 import Control.Monad.State
 import Control.Concurrent.MVar
 import Data.List
@@ -231,15 +233,17 @@ ifCaseInterchange = mapM ifCaseInterchangeRule where
     simplifyArms ((ns, t):arms) = map (\i -> ([i], t)) ns ++ simplifyArms arms
     simplifyArms [] = []
 
-
+-- | Generates a random index that is in the bounds of the supplied array
 randomIndex :: [a] -> IO Int
 randomIndex l = randomRIO (0, length l - 1)
 
+-- | Gives you a random element from the supplied array
 randomElem :: [a] -> IO a
 randomElem l = do
     ridx <- randomIndex l
     return $ l !! ridx
 
+-- | Gives you a random element, and the rest of the elements from the supplied array
 randomElemWithRest :: Eq a => [a] -> IO (a, [a])
 randomElemWithRest els = do
     rel <- randomElem els

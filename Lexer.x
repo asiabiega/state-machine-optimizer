@@ -1,6 +1,8 @@
 {
 {-# OPTIONS_GHC -w #-}
 module Lexer where
+-- Author: Aleksander Balicki
+-- A lexer
 import Prelude hiding (lex)
 }
 
