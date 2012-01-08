@@ -2,6 +2,9 @@ module Optimizer2 where
 import Prelude
 import AST
 
+import Data.Function
+import Data.List
+
 optimizations2 = [(notAccessibleBranchRemoval, "not-accesible-branch-removal")
                  ,(sameArgBranchRemoval, "same-arg-branch-removal")
                  ,(trivialAndRemoval, "trivial-and-removal")]
@@ -69,8 +72,7 @@ saBranchRemoval (TmCase (TmVar x) arms def) =
 
 saBranchRemoval t = t
 
-rmDuplicated [] = []
-rmDuplicated ((cond,term):xs) = (cond,term) : rmDuplicated (filter (\(a,b) -> not(a == cond)) xs)
+rmDuplicated = nubBy (on (==) fst)
 
 -------------------------------------------------------------------------------------------------------------
 
