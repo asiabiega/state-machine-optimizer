@@ -15,21 +15,18 @@ optimizations2 = [(return . notAccessibleBranchRemoval, "not-accesible-branch-re
 
 termToConditionList :: Term -> [(Bool, Condition)] -> [([(Bool, Condition)], Term)]
 termToConditionList (TmIf cond tt elifs tf) cnd = 
-    let cond_tt = termToConditionList tt cnd in
-    --(condition, list of condition-term pairs for t)
-    let cond_elifs = map (\(c, t) -> (c, termToConditionList t cnd)) elifs in
-    let cond_tf = termToConditionList tf cnd in
-    --common list of(cond, condition-term pairs)
-    let full_cond_list = (cond, cond_tt) : cond_elifs ++ [(TmTrue, cond_tf)] in
-    -- map current condition (in split version) to list of needed conditions
-    let full_cond_list_with_current = map (\(cond, tt) -> (splitCond cond, [ ( x ++ q,t) | x<-(splitCond cond), (q,t) <- tt ])) full_cond_list in
-    let (negs, almost) = foldl (\(neg, curr) (c,t)-> (neg ++ (negateSplitCond c), [ ( x ++ q,tr) | x<-neg, (q,tr) <- t ] :curr)) ([],[]) full_cond_list_with_current in
+    let cond_tt = termToConditionList tt cnd :: [([(Bool, Condition)], Term)] in
+    let cond_elifs = map (\(c, t) -> (c, termToConditionList t cnd)) elifs :: [(Condition, [([(Bool, Condition)], Term)])] in
+    let cond_tf = (termToConditionList tf cnd) :: [([(Bool, Condition)], Term)] in
+    let full_cond_list = (cond, cond_tt) : cond_elifs ++ [(TmTrue, cond_tf)] :: [(Condition, [([(Bool, Condition)], Term)])] in
+    let full_cond_list_with_current = map (\(c, tt) -> (splitCond c, [ ( x ++ q,t) | x<-(splitCond cond), (q,t) <- tt ])) full_cond_list :: [([[(Bool, Condition)]], [([(Bool, Condition)], Term)])] in
+    let (negs, almost) = foldl (\(neg, curr) (c,t)-> (neg ++ (negateSplitCond c), [ ( x ++ q,tr) | x<-neg, (q,tr) <- t ] :curr)) ([],[]) full_cond_list_with_current :: ( [[(Bool, Condition)]], [[([(Bool, Condition)], Term)]]) in
     concat almost
 
 termToConditionList (TmCase (TmVar x) arms def) cnd = 
     let cond_def = termToConditionList def cnd in
     let cond_arms = map (\(vals, t) -> (vals, termToConditionList t cnd)) arms in
-    let cond_arms_ = concatMap (\(vals, cl) -> [ ( (True, TmEquals (TmVar x) p):q, t) | p <- vals, (q,t) <- cl ]) cond_arms in
+    let cond_arms_ = concatMap (\(vals, cl) -> [ ( (True, TmEquals (TmVar x) p 0):q, t) | p <- vals, (q,t) <- cl ]) cond_arms in
     cond_def ++ cond_arms_
 
 termToConditionList (TmDecision s u) cond = [(cond, TmDecision s u)]
