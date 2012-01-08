@@ -1,3 +1,6 @@
+-- @author: Joanna Biega
+-- machine evaluation module
+
 module Evaluator where
 import Prelude hiding (lex)
 import System.Random

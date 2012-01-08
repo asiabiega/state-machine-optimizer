@@ -1,3 +1,6 @@
+-- @author: Joanna Biega
+-- machine size measuring module
+
 module MachineSize where
 import Prelude hiding (lex)
 

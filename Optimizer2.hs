@@ -1,3 +1,6 @@
+-- @author: Joanna Biega
+-- optimization module (some of the optimization rules)
+
 module Optimizer2 where
 import Prelude
 import AST
@@ -11,36 +14,6 @@ optimizations2 = [(return . notAccessibleBranchRemoval, "not-accesible-branch-re
                  ,(trivialAndRemoval, "trivial-and-removal")]
 
 -------------------------------------------------------------------------------------------------------------
--- Character-to-condition-for-each-decision helper function
-
-termToConditionList :: Term -> [(Bool, Condition)] -> [([(Bool, Condition)], Term)]
-termToConditionList (TmIf cond tt elifs tf) cnd = 
-    let cond_tt = termToConditionList tt cnd :: [([(Bool, Condition)], Term)] in
-    let cond_elifs = map (\(c, t) -> (c, termToConditionList t cnd)) elifs :: [(Condition, [([(Bool, Condition)], Term)])] in
-    let cond_tf = (termToConditionList tf cnd) :: [([(Bool, Condition)], Term)] in
-    let full_cond_list = (cond, cond_tt) : cond_elifs ++ [(TmTrue, cond_tf)] :: [(Condition, [([(Bool, Condition)], Term)])] in
-    let full_cond_list_with_current = map (\(c, tt) -> (splitCond c, [ ( x ++ q,t) | x<-(splitCond cond), (q,t) <- tt ])) full_cond_list :: [([[(Bool, Condition)]], [([(Bool, Condition)], Term)])] in
-    let (negs, almost) = foldl (\(neg, curr) (c,t)-> (neg ++ (negateSplitCond c), [ ( x ++ q,tr) | x<-neg, (q,tr) <- t ] :curr)) ([],[]) full_cond_list_with_current :: ( [[(Bool, Condition)]], [[([(Bool, Condition)], Term)]]) in
-    concat almost
-
-termToConditionList (TmCase (TmVar x) arms def) cnd = 
-    let cond_def = termToConditionList def cnd in
-    let cond_arms = map (\(vals, t) -> (vals, termToConditionList t cnd)) arms in
-    let cond_arms_ = concatMap (\(vals, cl) -> [ ( (True, TmEquals (TmVar x) p 0):q, t) | p <- vals, (q,t) <- cl ]) cond_arms in
-    cond_def ++ cond_arms_
-
-termToConditionList (TmDecision s u) cond = [(cond, TmDecision s u)]
-
---TODO: split cond
-splitCond c = [[(True,c)]]
-
---TODO: negate
-negateSplitCond c = undefined
-
--------------------------------------------------------------------------------------------------------------
-
---TODO? : negacja warunków po przejściu do następnego brancha
---TODO? : uwzględnienie CASE
 
 --INACCESSIBLE BRANCH REMOVAL
 
@@ -66,10 +39,10 @@ naBranchRemoval (TmIf cond tt elifs tf) assumptions =
 
 naBranchRemoval (TmCase (TmVar x) arms def) assumptions = 
             let def_ = (naBranchRemoval def assumptions) in
-            let arms_ = map (\(x,y) -> (x, naBranchRemoval y assumptions)) arms in
+            let arms_ = map (\(v,y) -> (v, naBranchRemoval y assumptions)) arms in
             TmCase (TmVar x) arms_ def_
 
-naBranchRemoval t assuptions = t
+naBranchRemoval t _ = t
 
 
 contradicts c = any (contradictsCond c)
@@ -97,7 +70,7 @@ saBranchRemoval (TmIf cond tt elifs tf) = let l = rmDuplicated $ (cond, tt):elif
 
 saBranchRemoval (TmCase (TmVar x) arms def) = 
             let def_ = saBranchRemoval def in
-            let arms_ = map (\(x,y) -> (x, saBranchRemoval y)) arms in
+            let arms_ = map (\(v,y) -> (v, saBranchRemoval y)) arms in
             TmCase (TmVar x) arms_ def_
 
 saBranchRemoval t = t
@@ -119,7 +92,7 @@ trivialAndTermRemoval (TmIf cond tt elifs tf) = do
     tf_ <- trivialAndTermRemoval tf
     return $ TmIf cond_ tt_ elifs_ tf_
 trivialAndTermRemoval (TmCase (TmVar x) arms def) = do
-    arms_ <- mapM (\(x,y) -> do { my <- trivialAndTermRemoval y; return (x, my)}) arms
+    arms_ <- mapM (\(v,y) -> do { my <- trivialAndTermRemoval y; return (v, my)}) arms
     def_ <- trivialAndTermRemoval def
     return $ TmCase (TmVar x) arms_ def_
 trivialAndTermRemoval t = return t
@@ -133,3 +106,4 @@ trivialAndConditionRemoval t = return t
 
 rmDuplicatedCond [] = []
 rmDuplicatedCond (cond:xs) = cond : rmDuplicatedCond (filter (\x -> not(x == cond)) xs)
+-------------------------------------------------------------------------------------------------------------
