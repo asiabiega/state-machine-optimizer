@@ -21,7 +21,7 @@ main = do
         let randomOptimizations =  map fst randomOptimizationsWithNames
         let randomOptimizationNames = map snd randomOptimizationsWithNames
 
-        ((oldAst, _), (newAst, _)) <- oldNewAstWithSize (optimize' randomOptimizations) cont
+        ((oldAst, _), (newAst, _)) <- oldNewAstWithSize 10 (optimize' randomOptimizations) cont
 
         renv <- randomEnv oldAst
 

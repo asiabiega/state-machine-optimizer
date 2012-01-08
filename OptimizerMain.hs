@@ -17,7 +17,7 @@ main = do
                 files <- listFiles "inputs/"
                 contentlist <- mapM readFile files
 
-                astlist <- mapM (oldNewAstWithSize optimize) contentlist
+                astlist <- mapM (oldNewAstWithSize 10 optimize) contentlist
                 let (oldSizeSum, newSizeSum) = foldl (\(x,y) ((_,x2),(_,y2)) -> (x+x2, y+y2)) (0,0) astlist
 
                 putStrLn $ "old size sum: " ++ show oldSizeSum
@@ -28,11 +28,9 @@ main = do
             _ -> do
                 let time = read arg :: Int
                 cont <- getContents
-                ((_, oldSize), (newAst, newSize)) <- oldNewAstWithSize optimize cont
-    --            bestSolution <- newMVar (msize oldAst, oldAst)
-    --            ast <- timeout (time*1000000) (return $ fst $ runState (optimize $ oldAst) state)
-    --            case ast of
-    --                Nothing -> hPutStrLn stderr "timed out"
+                ((_, oldSize), (newAst, newSize)) <- oldNewAstWithSize time optimize cont
+    --          case ast of
+    --              Nothing -> hPutStrLn stderr "timed out"
                 putStrLn $ pp newAst
                 putStrLn $ "old size: " ++ show oldSize --(takeMVar bestSolution)
                 putStrLn $ "new size: " ++ show newSize
