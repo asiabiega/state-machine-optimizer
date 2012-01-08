@@ -15,6 +15,13 @@ optimize = optimize' (map fst optimizations)
 optimize' :: [Character -> Tagger Character] -> Character -> Tagger Character
 optimize' ops char = foldM (\ char op -> op char) char ops
 
+
+-- Was supposed to be a main loop, transforms Character into a list of (boolean condition, decision),
+-- where boolean condition is true, when decision would be the machine result.
+-- From the list we randomly order the variables, then generate a tree in the order,
+-- that the first variable is the top Case statement, then the second, etc.
+-- After generating a random tree, we optimize it with usual optimizations that are deterministic.
+-- We keep a MVar (it was going to work with threads) of the best solution avaliable, and overwrite it when we find a better one.
 charToConditionList :: Character -> [(StateNumber, [([(Bool, Condition)], Term)])] --no AND nor OR conditions, terms - only decisions
 charToConditionList = undefined
 
@@ -145,7 +152,7 @@ stateNumberWildcarder = map stateNumberWildcarderRule where
     stateNumberWildcarderTerm a@(TmDecision TmCurrent _) = return a
     stateNumberWildcarderTerm a@(TmDecision (TmState i) u) = gets $ \i2 -> if i == i2 then TmDecision TmCurrent u else a
 
-
+-- | Changes between TmCase and TmIf depending on the cost of each one
 ifCaseInterchange :: Character -> Tagger Character
 ifCaseInterchange = mapM ifCaseInterchangeRule where
     ifCaseInterchangeRule :: Rule -> Tagger Rule
